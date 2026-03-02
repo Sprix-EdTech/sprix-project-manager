@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description"
+        content="Sprix EdTech Project Progress Manager — Portfolio-level tracking for assessments, content, engineering, and monetization.">
+    <title>Sprix EdTech | Project Progress Manager</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="apple-touch-icon" href="favicon.png">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Montserrat:wght@700;800;900&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+</head>
+
+<body>
+
+    <!-- Auth Overlay -->
+    <div class="auth-overlay" id="authOverlay">
+        <div class="auth-card">
+            <div class="auth-logo-group">
+                <div class="auth-logo-row">
+                    <div class="auth-logo-box"><img src="sprix-logo.png" alt="SPRIX" class="auth-logo-img"></div>
+                    <span class="auth-edtech">EdTech</span>
+                </div>
+                <div class="auth-app-name" data-i18n="auth.subtitle">Project Progress Manager</div>
+            </div>
+            <h3 class="auth-title" data-i18n="auth.title">Enter Password</h3>
+            <div class="auth-form">
+                <input type="password" class="auth-input" id="authPassword" data-i18n-placeholder="auth.placeholder"
+                    placeholder="Password">
+                <div class="auth-error" id="authError" data-i18n="auth.error">Incorrect password</div>
+                <button class="auth-btn" id="btnAuth" data-i18n="auth.btn">Unlock</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- App Layout -->
+    <div class="app-layout" id="appLayout" style="display:none;">
+
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <div class="logo-group">
+                    <div class="logo">
+                        <div class="logo-box"><img src="sprix-logo.png" alt="SPRIX" class="logo-img"></div>
+                        <span class="logo-edtech">EdTech</span>
+                    </div>
+                    <div class="logo-app-title" data-i18n="auth.subtitle">Project Progress Manager</div>
+                </div>
+                <button class="sidebar-close" id="sidebarClose">✕</button>
+            </div>
+
+            <nav class="sidebar-nav" id="sidebarNav">
+                <div class="nav-section">
+                    <div class="nav-section-title" data-i18n="section.overview">Overview</div>
+                    <a href="#" class="nav-item active" data-view="hub" id="navHub">
+                        <span class="nav-icon">📊</span>
+                        <span data-i18n="nav.hub">Portfolio Hub</span>
+                    </a>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title-row">
+                        <span data-i18n="section.portfolios">Portfolios</span>
+                        <button class="nav-section-add" id="btnAddPortfolio" title="Add Portfolio">＋</button>
+                    </div>
+                    <div id="portfolioNavItems">
+                        <!-- Dynamically rendered -->
+                    </div>
+                </div>
+                <div class="nav-section">
+                    <div class="nav-section-title" data-i18n="section.views">Views</div>
+                    <a href="#" class="nav-item" data-view="all-table"><span class="nav-icon">📋</span><span
+                            data-i18n="nav.allTable">All Projects (Table)</span></a>
+                    <a href="#" class="nav-item" data-view="all-kanban"><span class="nav-icon">📌</span><span
+                            data-i18n="nav.kanban">Kanban Board</span></a>
+                    <a href="#" class="nav-item" data-view="all-timeline"><span class="nav-icon">📅</span><span
+                            data-i18n="nav.timeline">Timeline</span></a>
+                </div>
+                <div class="nav-section">
+                    <a href="#" class="nav-item" data-view="settings" id="navSettings"><span
+                            class="nav-icon">⚙️</span><span data-i18n="nav.settings">Settings</span></a>
+                </div>
+            </nav>
+
+            <!-- Live Clocks -->
+            <div class="sidebar-clocks" id="sidebarClocks">
+                <div class="clock-row">
+                    <span class="clock-flag">🇯🇵</span>
+                    <span class="clock-label">Tokyo</span>
+                    <span class="clock-time" id="clockJP">--:--</span>
+                    <span class="clock-date" id="clockJPDate">---</span>
+                </div>
+                <div class="clock-row">
+                    <span class="clock-flag">🇪🇬</span>
+                    <span class="clock-label">Cairo</span>
+                    <span class="clock-time" id="clockEG">--:--</span>
+                    <span class="clock-date" id="clockEGDate">---</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Sidebar Overlay -->
+        <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+        <!-- Main Content -->
+        <main class="main-content" id="mainContent">
+            <header class="main-header">
+                <div class="header-left">
+                    <button class="hamburger" id="hamburgerBtn"><span></span><span></span><span></span></button>
+                    <h1 class="page-title" id="pageTitle">Portfolio Hub</h1>
+                </div>
+                <div class="header-center">
+                    <div class="search-box">
+                        <span class="search-icon">🔍</span>
+                        <input type="text" class="search-input" id="searchInput"
+                            data-i18n-placeholder="search.placeholder" placeholder="Search projects...">
+                    </div>
+                    <div class="filter-pills" id="filterPills">
+                        <button class="filter-pill" data-filter="status"><span
+                                data-i18n="filter.status">Status</span><span class="pill-arrow">▾</span></button>
+                        <button class="filter-pill" data-filter="owner"><span data-i18n="filter.owner">Owner</span><span
+                                class="pill-arrow">▾</span></button>
+                    </div>
+                    <div class="blocker-alert" id="blockerAlert">
+                        <span class="blocker-icon">⚠️</span>
+                        <span class="blocker-count" id="blockerCount">0</span>
+                        <span class="blocker-label" data-i18n="alert.blockers">Blockers</span>
+                    </div>
+                </div>
+                <div class="header-right">
+                    <button class="font-size-btn" id="fontSizeBtn" onclick="window._toggleFontSize()"
+                        title="Font Size">Aa</button>
+                    <div class="lang-switcher" id="langSwitcher">
+                        <button class="lang-btn active" data-lang="en" onclick="setLanguage('en')">EN</button>
+                        <button class="lang-btn" data-lang="ja" onclick="setLanguage('ja')">日本語</button>
+                        <button class="lang-btn" data-lang="ar" onclick="setLanguage('ar')">عربي</button>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Filter Dropdown -->
+            <div class="filter-dropdown" id="filterDropdown" style="display:none;">
+                <div class="filter-dropdown-header">
+                    <span class="filter-dropdown-title" id="filterDropdownTitle">Filter</span>
+                    <button class="filter-clear" id="filterClear" data-i18n="filter.clear">Clear</button>
+                </div>
+                <div class="filter-dropdown-body" id="filterDropdownBody"></div>
+            </div>
+
+            <!-- Hub View -->
+            <section class="view-section" id="viewHub">
+                <div class="stats-bar" id="statsBar">
+                    <div class="stat-card stat-clickable" data-stat="total" onclick="window._statClick('total')">
+                        <div class="stat-value" id="statTotalVal">0</div>
+                        <div class="stat-label" data-i18n="stat.total">Total Projects</div>
+                    </div>
+                    <div class="stat-card stat-on-track stat-clickable" data-stat="On Track"
+                        onclick="window._statClick('On Track')">
+                        <div class="stat-value" id="statOnTrackVal">0</div>
+                        <div class="stat-label" data-i18n="stat.onTrack">On Track</div>
+                    </div>
+                    <div class="stat-card stat-at-risk stat-clickable" data-stat="At Risk"
+                        onclick="window._statClick('At Risk')">
+                        <div class="stat-value" id="statAtRiskVal">0</div>
+                        <div class="stat-label" data-i18n="stat.atRisk">At Risk</div>
+                    </div>
+                    <div class="stat-card stat-off-track stat-clickable" data-stat="Off Track"
+                        onclick="window._statClick('Off Track')">
+                        <div class="stat-value" id="statOffTrackVal">0</div>
+                        <div class="stat-label" data-i18n="stat.offTrack">Off Track</div>
+                    </div>
+                    <div class="stat-card stat-done stat-clickable" data-stat="Done"
+                        onclick="window._statClick('Done')">
+                        <div class="stat-value" id="statDoneVal">0</div>
+                        <div class="stat-label" data-i18n="stat.done">Done</div>
+                    </div>
+                </div>
+                <div class="portfolio-cards" id="portfolioCards"></div>
+                <div class="charts-section">
+                    <div class="chart-card">
+                        <div class="chart-title" data-i18n="hub.statusDist">Status Distribution</div><canvas
+                            id="chartStatus" width="300" height="300"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <div class="chart-title" data-i18n="hub.pfProgress">Portfolio Progress</div><canvas
+                            id="chartProgress" width="500" height="300"></canvas>
+                    </div>
+                </div>
+                <div class="blocker-section">
+                    <h2 class="section-title">🚨 <span data-i18n="hub.blockers">Active Blockers</span></h2>
+                    <div id="blockerList"></div>
+                </div>
+                <div class="milestone-section">
+                    <h2 class="section-title">📅 <span data-i18n="hub.milestones">Upcoming Milestones</span></h2>
+                    <div id="milestoneList"></div>
+                </div>
+            </section>
+
+            <!-- Table View -->
+            <section class="view-section" id="viewTable" style="display:none;">
+                <div class="view-header-row">
+                    <div class="view-tabs"><button class="view-tab active" data-tab="table">📋 <span
+                                data-i18n="tab.table">Table</span></button><button class="view-tab" data-tab="kanban">📌
+                            <span data-i18n="tab.kanban">Kanban</span></button><button class="view-tab"
+                            data-tab="timeline">📅 <span data-i18n="tab.timeline">Timeline</span></button></div>
+                    <button class="btn-add-project" id="btnAddProject" data-i18n="crud.addProject">＋ Add
+                        Project</button>
+                </div>
+                <div class="table-container">
+                    <table class="project-table" id="projectTable">
+                        <thead id="projectTableHead"></thead>
+                        <tbody id="projectTableBody"></tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- Kanban View -->
+            <section class="view-section" id="viewKanban" style="display:none;">
+                <div class="view-header-row">
+                    <div class="view-tabs"><button class="view-tab" data-tab="table">📋 <span
+                                data-i18n="tab.table">Table</span></button><button class="view-tab active"
+                            data-tab="kanban">📌 <span data-i18n="tab.kanban">Kanban</span></button><button
+                            class="view-tab" data-tab="timeline">📅 <span
+                                data-i18n="tab.timeline">Timeline</span></button></div>
+                    <button class="btn-add-project" onclick="window._openCrudModal()" data-i18n="crud.addProject">＋ Add
+                        Project</button>
+                </div>
+                <div class="kanban-board" id="kanbanBoard"></div>
+            </section>
+
+            <!-- Timeline View -->
+            <section class="view-section" id="viewTimeline" style="display:none;">
+                <div class="view-header-row">
+                    <div class="view-tabs"><button class="view-tab" data-tab="table">📋 <span
+                                data-i18n="tab.table">Table</span></button><button class="view-tab" data-tab="kanban">📌
+                            <span data-i18n="tab.kanban">Kanban</span></button><button class="view-tab active"
+                            data-tab="timeline">📅 <span data-i18n="tab.timeline">Timeline</span></button></div>
+                </div>
+                <div class="timeline-container"><canvas id="timelineCanvas" width="1200" height="600"></canvas></div>
+            </section>
+
+            <!-- Settings View -->
+            <section class="view-section" id="viewSettings" style="display:none;">
+                <div class="settings-grid" id="settingsGrid">
+                    <div class="settings-card">
+                        <h3>🎨 <span data-i18n="settings.theme">Theme & Appearance</span></h3>
+                        <div class="settings-field">
+                            <select class="settings-select" id="themeSelect" onchange="window._changeTheme()">
+                                <option value="light" data-i18n="settings.themeLight">Light Mode</option>
+                                <option value="dark" data-i18n="settings.themeDark">Dark Mode</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="settings-card">
+                        <h3>📥 <span data-i18n="settings.csvTitle">CSV Export</span></h3>
+                        <p data-i18n="settings.csvDesc">Download all project data as CSV</p>
+                        <button class="btn-primary" id="btnExportCSV" data-i18n="settings.csvBtn">📥 Download
+                            CSV</button>
+                    </div>
+                    <div class="settings-card">
+                        <h3>💾 <span data-i18n="settings.jsonTitle">JSON Backup</span></h3>
+                        <p data-i18n="settings.jsonDesc">Save or restore a backup</p>
+                        <div class="settings-btn-group">
+                            <button class="btn-outline" id="btnExportJSON" data-i18n="settings.backupBtn">📥 Save
+                                Backup</button>
+                            <label class="btn-outline" style="cursor:pointer;"><span data-i18n="settings.restoreBtn">📤
+                                    Restore</span><input type="file" accept=".json" id="btnImportJSON"
+                                    style="display:none;"></label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <!-- Project Detail Modal -->
+    <div class="modal-overlay" id="modalOverlay" style="display:none;">
+        <div class="modal" id="projectModal">
+            <div class="modal-header">
+                <div class="modal-title-area">
+                    <span class="modal-portfolio-badge" id="modalPortfolioBadge"></span>
+                    <h2 class="modal-title" id="modalTitle"></h2>
+                </div>
+                <div class="modal-actions">
+                    <button class="modal-edit-btn" id="modalEditBtn" title="Edit">✏️</button>
+                    <button class="modal-delete-btn" id="modalDeleteBtn" title="Delete">🗑️</button>
+                    <button class="modal-close" id="modalClose">✕</button>
+                </div>
+            </div>
+            <div class="modal-body" id="modalBody"></div>
+        </div>
+    </div>
+
+    <!-- CRUD Modal -->
+    <div class="modal-overlay" id="crudOverlay" style="display:none;">
+        <div class="modal crud-modal" id="crudModal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="crudTitle" data-i18n="crud.addTitle">Add New Project</h2>
+                <button class="modal-close" id="crudClose">✕</button>
+            </div>
+            <div class="modal-body" id="crudBody"></div>
+            <div class="modal-footer">
+                <button class="btn-outline" id="crudCancel" data-i18n="crud.cancel">Cancel</button>
+                <button class="btn-primary" id="crudSave" data-i18n="crud.save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Portfolio CRUD Modal -->
+    <div class="modal-overlay" id="pfCrudOverlay" style="display:none;">
+        <div class="modal crud-modal" id="pfCrudModal">
+            <div class="modal-header">
+                <h2 class="modal-title" id="pfCrudTitle" data-i18n="pf.addTitle">Add Portfolio</h2>
+                <button class="modal-close" id="pfCrudClose">✕</button>
+            </div>
+            <div class="modal-body" id="pfCrudBody"></div>
+            <div class="modal-footer">
+                <button class="btn-outline" id="pfCrudCancel" data-i18n="crud.cancel">Cancel</button>
+                <button class="btn-primary" id="pfCrudSave" data-i18n="crud.save">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="i18n.js"></script>
+    <script src="data.js"></script>
+    <script src="app.js"></script>
+</body>
+
+</html>
