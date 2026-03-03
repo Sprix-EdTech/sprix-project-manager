@@ -433,8 +433,8 @@
 
     function renderMilestones() {
         const now = new Date(), in30 = new Date(now.getTime() + 30 * 86400000);
-        const ms = projects.filter(p => { if (!p.targetDate) return false; const d = new Date(p.targetDate); return d >= now && d <= in30; }).sort((a, b) => new Date(a.targetDate) - new Date(b.targetDate));
-        $('milestoneList').innerHTML = ms.length ? ms.map(p => `<div class="milestone-item" onclick="window._openModal(${p.id})"><span class="milestone-date">${formatDate(p.targetDate)}</span><span class="milestone-project">${p.name}</span><span class="milestone-text">${p.nextMilestone}</span></div>`).join('') :
+        const ms = projects.filter(p => { if (!p.targetdate) return false; const d = new Date(p.targetdate); return d >= now && d <= in30; }).sort((a, b) => new Date(a.targetdate) - new Date(b.targetdate));
+        $('milestoneList').innerHTML = ms.length ? ms.map(p => `<div class="milestone-item" onclick="window._openModal(${p.id})"><span class="milestone-date">${formatDate(p.targetdate)}</span><span class="milestone-project">${p.name}</span><span class="milestone-text">${p.nextmilestone}</span></div>`).join('') :
             `<div class="empty-state"><div class="empty-state-icon">📅</div><div class="empty-state-text">${t('hub.noMilestones')}</div></div>`;
     }
 
@@ -501,10 +501,10 @@
         if (sortColumn) ps.sort((a, b) => { let va = a[sortColumn], vb = b[sortColumn]; if (typeof va === 'number') return sortDirection === 'asc' ? va - vb : vb - va; va = (va || '').toString(); vb = (vb || '').toString(); return sortDirection === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va); });
         const cols = [
             { key: 'name', label: t('col.project'), w: '180px' }, { key: 'status', label: t('col.status'), w: '110px' },
-            { key: 'progress', label: t('col.progress'), w: '130px' }, { key: 'approvalFlow', label: t('col.approval'), w: '160px' },
-            { key: 'owner', label: t('col.owner'), w: '90px' }, { key: 'currentFocus', label: t('col.currentFocus'), w: '160px' },
-            { key: 'blockers', label: t('col.blockers'), w: '160px' }, { key: 'nextMilestone', label: t('col.nextMilestone'), w: '140px' },
-            { key: 'targetDate', label: t('col.targetDate'), w: '90px' }, { key: 'actions', label: t('col.actions'), w: '70px' }
+            { key: 'progress', label: t('col.progress'), w: '130px' }, { key: 'approvalflow', label: t('col.approval'), w: '160px' },
+            { key: 'owner', label: t('col.owner'), w: '90px' }, { key: 'currentfocus', label: t('col.currentfocus'), w: '160px' },
+            { key: 'blockers', label: t('col.blockers'), w: '160px' }, { key: 'nextmilestone', label: t('col.nextmilestone'), w: '140px' },
+            { key: 'targetdate', label: t('col.targetdate'), w: '90px' }, { key: 'actions', label: t('col.actions'), w: '70px' }
         ];
         $('projectTableHead').innerHTML = '<tr>' + cols.map(c => `<th style="min-width:${c.w}" data-col="${c.key}" onclick="${c.key !== 'actions' ? `window._sortBy('${c.key}')` : ''}" class="${sortColumn === c.key ? 'sort-' + sortDirection : ''}">${c.label}</th>`).join('') + '</tr>';
         $('projectTableBody').innerHTML = ps.map(p => {
@@ -513,12 +513,12 @@
             <td><span class="cell-project-name" onclick="window._openModal(${p.id})">${p.name}</span></td>
             <td><span class="status-badge ${sc}"><span class="status-dot ${sc}"></span>${p.status}</span></td>
             <td><div class="progress-cell"><div class="progress-bar-mini"><div class="progress-bar-fill" style="width:${p.progress}%;background:${progressColor(p.progress)}"></div></div><span class="progress-value">${p.progress}%</span></div></td>
-            <td>${renderApprovalSteps(p.approvalFlow)}</td>
+            <td>${renderApprovalSteps(p.approvalflow)}</td>
             <td>${p.owner}</td>
-            <td class="text-truncate" style="max-width:160px" title="${p.currentFocus}">${p.currentFocus}</td>
+            <td class="text-truncate" style="max-width:160px" title="${p.currentfocus}">${p.currentfocus}</td>
             <td style="color:${p.blockers ? 'var(--status-off-track)' : 'inherit'};font-weight:${p.blockers ? '600' : '400'}">${p.blockers || '—'}</td>
-            <td>${p.nextMilestone}</td>
-            <td>${formatDate(p.targetDate)}</td>
+            <td>${p.nextmilestone}</td>
+            <td>${formatDate(p.targetdate)}</td>
             <td><div class="row-actions"><button class="row-action-btn" onclick="event.stopPropagation();window._openCrudModal(${p.id})" title="Edit">✏️</button><button class="row-action-btn" onclick="event.stopPropagation();window._deleteProject(${p.id})" title="Delete">🗑️</button></div></td>
         </tr>`;
         }).join('');
@@ -543,7 +543,7 @@
         $('kanbanBoard').innerHTML = STATUS_LIST.map(status => {
             const sc = STATUS_CLASSES[status]; const items = ps.filter(p => p.status === status);
             return `<div class="kanban-column" data-status="${sc}"><div class="kanban-column-header"><span class="kanban-column-title"><span class="status-dot ${sc}"></span>${status}</span><span class="kanban-column-count">${items.length}</span></div>
-            ${items.map(p => { const pf = PORTFOLIOS.find(x => x.id === p.portfolio); return `<div class="kanban-card" onclick="window._openModal(${p.id})"><div class="kanban-card-portfolio">${pf ? pf.icon + ' ' + (t('pf.' + pf.id) || pf.name) : ''}</div><div class="kanban-card-title">${p.name}</div><div class="kanban-card-footer"><span class="kanban-card-owner">${p.owner}</span><span class="kanban-card-progress" style="color:${progressColor(p.progress)}">${p.progress}%</span></div>${p.nextMilestone ? `<div class="kanban-card-milestone">🏁 ${p.nextMilestone}</div>` : ''}</div>`; }).join('')}
+            ${items.map(p => { const pf = PORTFOLIOS.find(x => x.id === p.portfolio); return `<div class="kanban-card" onclick="window._openModal(${p.id})"><div class="kanban-card-portfolio">${pf ? pf.icon + ' ' + (t('pf.' + pf.id) || pf.name) : ''}</div><div class="kanban-card-title">${p.name}</div><div class="kanban-card-footer"><span class="kanban-card-owner">${p.owner}</span><span class="kanban-card-progress" style="color:${progressColor(p.progress)}">${p.progress}%</span></div>${p.nextmilestone ? `<div class="kanban-card-milestone">🏁 ${p.nextmilestone}</div>` : ''}</div>`; }).join('')}
         </div>`;
         }).join('');
     }
@@ -552,7 +552,7 @@
     function renderTimeline() {
         const canvas = $('timelineCanvas'); if (!canvas) return;
         const ctx = canvas.getContext('2d');
-        const ps = getFilteredProjects().filter(p => p.startDate && p.targetDate);
+        const ps = getFilteredProjects().filter(p => p.startdate && p.targetdate);
         const dpr = window.devicePixelRatio || 1;
         const rowH = 34, labelW = 170, marginTop = 50, marginRight = 20;
         const h = marginTop + ps.length * rowH + 40;
@@ -560,7 +560,7 @@
         canvas.width = w * dpr; canvas.height = h * dpr; canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
         ctx.scale(dpr, dpr); ctx.clearRect(0, 0, w, h);
         if (!ps.length) { ctx.fillStyle = '#94a3b8'; ctx.font = '500 14px Inter'; ctx.textAlign = 'center'; ctx.fillText('No projects', w / 2, h / 2); return; }
-        const dates = ps.flatMap(p => [new Date(p.startDate), new Date(p.targetDate)]);
+        const dates = ps.flatMap(p => [new Date(p.startdate), new Date(p.targetdate)]);
         const minD = new Date(Math.min(...dates)); const maxD = new Date(Math.max(...dates));
         minD.setDate(1); maxD.setMonth(maxD.getMonth() + 1); maxD.setDate(0);
         const totalMs = maxD - minD || 1, chartW = w - labelW - marginRight;
@@ -570,7 +570,7 @@
         while (md <= maxD) { const x = toX(md); const nextM = new Date(md); nextM.setMonth(nextM.getMonth() + 1); const x2 = toX(nextM > maxD ? maxD : nextM); ctx.fillStyle = isDark ? '#94a3b8' : '#475569'; ctx.fillText(months[md.getMonth()] + ' ' + md.getFullYear().toString().slice(2), (x + x2) / 2, 18); ctx.strokeStyle = isDark ? '#1e293b' : '#e2e8f0'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, 28); ctx.lineTo(x, h); ctx.stroke(); md.setMonth(md.getMonth() + 1); }
         const today = new Date();
         if (today >= minD && today <= maxD) { const tx = toX(today); ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(tx, 28); ctx.lineTo(tx, h); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = '#ef4444'; ctx.font = '600 9px Inter'; ctx.fillText('Today', tx, 40); }
-        ps.forEach((p, i) => { const y = marginTop + i * rowH; const x1 = toX(new Date(p.startDate)); const x2 = toX(new Date(p.targetDate)); if (i % 2 === 0) { ctx.fillStyle = isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.015)'; ctx.fillRect(0, y, w, rowH); } ctx.fillStyle = isDark ? '#f1f5f9' : '#0f172a'; ctx.font = '500 11px Inter'; ctx.textAlign = 'right'; ctx.fillText(p.name.length > 20 ? p.name.slice(0, 20) + '…' : p.name, labelW - 10, y + rowH / 2 + 3); const barH = 12, barY = y + (rowH - barH) / 2; const color = STATUS_COLORS[p.status]; ctx.fillStyle = color + '40'; ctx.beginPath(); ctx.roundRect(x1, barY, Math.max(x2 - x1, 6), barH, 3); ctx.fill(); const progW = (x2 - x1) * (p.progress / 100); ctx.fillStyle = color; ctx.beginPath(); ctx.roundRect(x1, barY, Math.max(progW, 3), barH, 3); ctx.fill(); });
+        ps.forEach((p, i) => { const y = marginTop + i * rowH; const x1 = toX(new Date(p.startdate)); const x2 = toX(new Date(p.targetdate)); if (i % 2 === 0) { ctx.fillStyle = isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.015)'; ctx.fillRect(0, y, w, rowH); } ctx.fillStyle = isDark ? '#f1f5f9' : '#0f172a'; ctx.font = '500 11px Inter'; ctx.textAlign = 'right'; ctx.fillText(p.name.length > 20 ? p.name.slice(0, 20) + '…' : p.name, labelW - 10, y + rowH / 2 + 3); const barH = 12, barY = y + (rowH - barH) / 2; const color = STATUS_COLORS[p.status]; ctx.fillStyle = color + '40'; ctx.beginPath(); ctx.roundRect(x1, barY, Math.max(x2 - x1, 6), barH, 3); ctx.fill(); const progW = (x2 - x1) * (p.progress / 100); ctx.fillStyle = color; ctx.beginPath(); ctx.roundRect(x1, barY, Math.max(progW, 3), barH, 3); ctx.fill(); });
     }
 
     // ========== MODAL (Detail) ==========
@@ -588,7 +588,7 @@
         $('modalPortfolioBadge').innerHTML = pf ? pf.icon + ' ' + (t('pf.' + pf.id) || pf.name) : '';
         $('modalTitle').textContent = p.name;
         $('modalTitle').dataset.projectId = id;
-        const approvalIdx = APPROVAL_STEPS.indexOf(p.approvalFlow);
+        const approvalIdx = APPROVAL_STEPS.indexOf(p.approvalflow);
         const approvalColors = ['var(--approval-draft)', 'var(--approval-review)', 'var(--approval-approved)', 'var(--approval-submitted)', 'var(--approval-accepted)'];
         $('modalBody').innerHTML = `
         <div class="modal-section"><div class="modal-section-title">${t('modal.overview')}</div><div class="modal-grid">
@@ -598,17 +598,17 @@
             <div class="modal-field"><div class="modal-field-label">${t('col.accountable')}</div><div class="modal-field-value">${p.accountable}</div></div>
             <div class="modal-field"><div class="modal-field-label">${t('col.stakeholders')}</div><div class="modal-field-value">${(p.stakeholders || []).join(', ')}</div></div>
             <div class="modal-field"><div class="modal-field-label">${t('col.progress')}</div><div class="modal-field-value"><div class="progress-cell"><div class="progress-bar-mini"><div class="progress-bar-fill" style="width:${p.progress}%;background:${progressColor(p.progress)}"></div></div><span class="progress-value">${p.progress}%</span></div></div></div>
-            <div class="modal-field"><div class="modal-field-label">${t('modal.startDate')}</div><div class="modal-field-value">${formatDate(p.startDate)}</div></div>
-            <div class="modal-field"><div class="modal-field-label">${t('modal.targetDate')}</div><div class="modal-field-value">${formatDate(p.targetDate)}</div></div>
+            <div class="modal-field"><div class="modal-field-label">${t('modal.startdate')}</div><div class="modal-field-value">${formatDate(p.startdate)}</div></div>
+            <div class="modal-field"><div class="modal-field-label">${t('modal.targetdate')}</div><div class="modal-field-value">${formatDate(p.targetdate)}</div></div>
         </div></div>
         <div class="modal-section"><div class="modal-section-title">${t('modal.approvalWorkflow')}</div>
             <div class="approval-flow-modal">${APPROVAL_STEPS.map((s, i) => { const active = i <= approvalIdx; const conn = i < APPROVAL_STEPS.length - 1 ? `<div class="approval-flow-connector${i < approvalIdx ? ' active' : ''}"></div>` : ''; return `<div class="approval-flow-step"><div class="approval-flow-circle" style="background:${active ? approvalColors[i] : (isDark ? '#334155' : '#e2e8f0')}">${active ? '✓' : (i + 1)}</div><div class="approval-flow-label">${t('approval.' + s.toLowerCase())}</div></div>${conn}`; }).join('')}</div>
         </div>
         <div class="modal-section"><div class="modal-section-title">${t('modal.currentStatus')}</div><div class="modal-grid">
-            <div class="modal-field full-width"><div class="modal-field-label">${t('modal.currentFocus')}</div><div class="modal-field-value">${p.currentFocus}</div></div>
+            <div class="modal-field full-width"><div class="modal-field-label">${t('modal.currentfocus')}</div><div class="modal-field-value">${p.currentfocus}</div></div>
             <div class="modal-field full-width"><div class="modal-field-label">${t('modal.deliverables')}</div><div class="modal-field-value">${p.deliverables}</div></div>
-            <div class="modal-field"><div class="modal-field-label">${t('modal.nextMilestone')}</div><div class="modal-field-value">${p.nextMilestone}</div></div>
-            <div class="modal-field"><div class="modal-field-label">${t('modal.lastUpdated')}</div><div class="modal-field-value">${formatDate(p.lastUpdated)}</div></div>
+            <div class="modal-field"><div class="modal-field-label">${t('modal.nextmilestone')}</div><div class="modal-field-value">${p.nextmilestone}</div></div>
+            <div class="modal-field"><div class="modal-field-label">${t('modal.lastupdated')}</div><div class="modal-field-value">${formatDate(p.lastupdated)}</div></div>
             ${p.blockers ? `<div class="modal-field full-width" style="border-left:3px solid var(--status-off-track)"><div class="modal-field-label">${t('modal.blockers')}</div><div class="modal-field-value" style="color:var(--status-off-track)">${p.blockers}</div></div>` : ''}
             ${p.risks ? `<div class="modal-field full-width"><div class="modal-field-label">${t('modal.risks')}</div><div class="modal-field-value">${p.risks}</div></div>` : ''}
         </div></div>`;
@@ -641,20 +641,20 @@
         </div>
         <div class="crud-field"><label class="crud-label">${t('crud.objective')}</label><input class="crud-input" id="crudObjective" value="${p ? p.objective : ''}"></div>
         <div class="crud-row">
-            <div class="crud-field"><label class="crud-label">${t('col.owner')}</label><input class="crud-input" id="crudOwner" value="${p ? p.owner : ''}"></div>
-            <div class="crud-field"><label class="crud-label">${t('col.accountable')}</label><input class="crud-input" id="crudAccountable" value="${p ? p.accountable : ''}"></div>
+            <div class="crud-field"><label class="crud-label">${t('col.owner')}</label><input class="crud-input" id="crudOwner" value="${p && p.owner ? p.owner : ''}"></div>
+            <div class="crud-field"><label class="crud-label">${t('col.accountable')}</label><input class="crud-input" id="crudAccountable" value="${p && p.accountable ? p.accountable : ''}"></div>
         </div>
         <div class="crud-row">
-            <div class="crud-field"><label class="crud-label">${t('col.progress')} (%)</label><input class="crud-input" type="number" min="0" max="100" id="crudProgress" value="${p ? p.progress : 0}"></div>
-            <div class="crud-field"><label class="crud-label">${t('col.approval')}</label><select class="crud-select" id="crudApproval">${APPROVAL_STEPS.map(s => `<option value="${s}" ${p && p.approvalFlow === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
+            <div class="crud-field"><label class="crud-label">${t('col.progress')} (%)</label><input class="crud-input" type="number" min="0" max="100" id="crudProgress" value="${p && p.progress ? p.progress : 0}"></div>
+            <div class="crud-field"><label class="crud-label">${t('col.approval')}</label><select class="crud-select" id="crudApproval">${APPROVAL_STEPS.map(s => `<option value="${s}" ${p && p.approvalflow === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
         </div>
         <div class="crud-row">
-            <div class="crud-field"><label class="crud-label">${t('modal.startDate')}</label><input class="crud-input" type="date" id="crudStart" value="${p ? p.startDate : ''}"></div>
-            <div class="crud-field"><label class="crud-label">${t('modal.targetDate')}</label><input class="crud-input" type="date" id="crudTarget" value="${p ? p.targetDate : ''}"></div>
+            <div class="crud-field"><label class="crud-label">${t('modal.startdate')}</label><input class="crud-input" type="date" id="crudStart" value="${p && p.startdate ? p.startdate : ''}"></div>
+            <div class="crud-field"><label class="crud-label">${t('modal.targetdate')}</label><input class="crud-input" type="date" id="crudTarget" value="${p && p.targetdate ? p.targetdate : ''}"></div>
         </div>
-        <div class="crud-field"><label class="crud-label">${t('modal.currentFocus')}</label><input class="crud-input" id="crudFocus" value="${p ? p.currentFocus : ''}"></div>
-        <div class="crud-field"><label class="crud-label">${t('col.blockers')}</label><input class="crud-input" id="crudBlockers" value="${p ? p.blockers : ''}"></div>
-        <div class="crud-field"><label class="crud-label">${t('modal.nextMilestone')}</label><input class="crud-input" id="crudMilestone" value="${p ? p.nextMilestone : ''}"></div>
+        <div class="crud-field"><label class="crud-label">${t('modal.currentfocus')}</label><input class="crud-input" id="crudFocus" value="${p && p.currentfocus ? p.currentfocus : ''}"></div>
+        <div class="crud-field"><label class="crud-label">${t('col.blockers')}</label><input class="crud-input" id="crudBlockers" value="${p && p.blockers ? p.blockers : ''}"></div>
+        <div class="crud-field"><label class="crud-label">${t('modal.nextmilestone')}</label><input class="crud-input" id="crudMilestone" value="${p && p.nextmilestone ? p.nextmilestone : ''}"></div>
     </div>`;
         $('crudOverlay').style.display = 'flex';
     };
@@ -665,11 +665,14 @@
         const data = {
             name, portfolio: $('crudPortfolio').value, status: $('crudStatus').value,
             objective: $('crudObjective').value, owner: $('crudOwner').value, accountable: $('crudAccountable').value,
-            progress: parseInt($('crudProgress').value) || 0, approvalFlow: $('crudApproval').value,
-            startDate: $('crudStart').value, targetDate: $('crudTarget').value,
-            currentFocus: $('crudFocus').value, blockers: $('crudBlockers').value,
-            nextMilestone: $('crudMilestone').value, lastUpdated: new Date().toISOString().slice(0, 10)
+            progress: parseInt($('crudProgress').value) || 0, approvalflow: $('crudApproval').value,
+            currentfocus: $('crudFocus').value, blockers: $('crudBlockers').value,
+            nextmilestone: $('crudMilestone').value, lastupdated: new Date().toISOString().slice(0, 10)
         };
+        const sDate = $('crudStart').value;
+        data.startdate = sDate ? sDate : null;
+        const tDate = $('crudTarget').value;
+        data.targetdate = tDate ? tDate : null;
 
         if (editingProjectId) {
             data.id = editingProjectId;
@@ -677,11 +680,17 @@
             if (!error) {
                 const p = projects.find(x => x.id === editingProjectId);
                 if (p) Object.assign(p, data);
+            } else {
+                showToast("Error updating database!");
+                return;
             }
         } else {
             const { data: inserted, error } = await supabase.from('projects').insert([data]).select();
             if (!error && inserted && inserted.length > 0) {
                 projects.push(inserted[0]);
+            } else {
+                showToast("Error creating project!");
+                return;
             }
         }
         closeCrudModal(); refreshCurrentView();
@@ -807,7 +816,7 @@
 
     function exportCSV() {
         const headers = ['Portfolio', 'Name', 'Status', 'Progress', 'Owner', 'Accountable', 'Stakeholders', 'Objective', 'CurrentFocus', 'Blockers', 'Risks', 'NextMilestone', 'TargetDate', 'ApprovalFlow', 'LastUpdated'];
-        const rows = projects.map(p => [PORTFOLIOS.find(x => x.id === p.portfolio)?.name || '', p.name, p.status, p.progress, p.owner, p.accountable, (p.stakeholders || []).join(';'), p.objective, p.currentFocus, p.blockers, p.risks, p.nextMilestone, p.targetDate, p.approvalFlow, p.lastUpdated].map(v => `"${(v || '').toString().replace(/"/g, '""')}"`));
+        const rows = projects.map(p => [PORTFOLIOS.find(x => x.id === p.portfolio)?.name || '', p.name, p.status, p.progress, p.owner, p.accountable, (p.stakeholders || []).join(';'), p.objective, p.currentfocus, p.blockers, p.risks, p.nextmilestone, p.targetdate, p.approvalflow, p.lastupdated].map(v => `"${(v || '').toString().replace(/"/g, '""')}"`));
         const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
         download('sprix-projects.csv', csv, 'text/csv');
         showToast(t('toast.csvDone'));
