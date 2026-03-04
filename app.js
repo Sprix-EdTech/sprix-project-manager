@@ -138,13 +138,16 @@
             <span class="nav-icon">${pf.icon}</span>
             <span>${t('pf.' + pf.id) || pf.name}</span>
             <span class="nav-badge">${count}</span>
-            <button class="nav-item-delete" onclick="event.preventDefault();event.stopPropagation();window._deletePortfolio('${pf.id}')" title="Delete">✕</button>
+            <div class="nav-actions">
+                <button class="nav-item-edit" onclick="event.preventDefault();event.stopPropagation();window._openPfCrudModal('${pf.id}')" title="Edit">✏️</button>
+                <button class="nav-item-delete" onclick="event.preventDefault();event.stopPropagation();window._deletePortfolio('${pf.id}')" title="Delete">✕</button>
+            </div>
         </a>`;
         }).join('');
         container.querySelectorAll('.nav-item').forEach(item => {
             item.addEventListener('click', e => {
                 e.preventDefault();
-                if (e.target.closest('.nav-item-delete')) return;
+                if (e.target.closest('.nav-actions')) return;
                 navigateTo('portfolio', item.dataset.portfolio);
                 toggleSidebar(false);
             });

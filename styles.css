@@ -2241,23 +2241,35 @@ body {
     color: var(--primary-300);
 }
 
-.nav-item-delete {
-    font-size: calc(var(--font-scale, 1) * 11px);
-    color: var(--text-tertiary);
-    padding: 2px;
-    border-radius: 3px;
+.nav-actions {
+    display: flex;
+    align-items: center;
     opacity: 0;
     transition: all var(--transition-fast);
-    margin-left: 4px;
+    margin-left: auto;
+    /* Push to right */
 }
 
-.rtl .nav-item-delete {
+.rtl .nav-actions {
     margin-left: 0;
-    margin-right: 4px;
+    margin-right: auto;
 }
 
-.nav-item:hover .nav-item-delete {
+.nav-item:hover .nav-actions {
     opacity: 1;
+}
+
+.nav-item-edit,
+.nav-item-delete {
+    font-size: calc(var(--font-scale, 1) * 12px);
+    color: var(--text-tertiary);
+    padding: 2px 4px;
+    border-radius: 3px;
+    transition: all var(--transition-fast);
+}
+
+.nav-item-edit:hover {
+    color: var(--primary-500);
 }
 
 .nav-item-delete:hover {
