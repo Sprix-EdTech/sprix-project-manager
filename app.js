@@ -744,6 +744,7 @@
         $('pfCrudSave').addEventListener('click', savePfCrud);
     }
 
+    window._openPfCrudModal = openPfCrudModal;
     function openPfCrudModal(id) {
         editingPfId = id || null;
         const pf = id ? PORTFOLIOS.find(x => x.id === id) : null;

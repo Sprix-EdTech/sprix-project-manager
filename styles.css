@@ -2246,13 +2246,12 @@ body {
     align-items: center;
     opacity: 0;
     transition: all var(--transition-fast);
-    margin-left: auto;
-    /* Push to right */
+    margin-left: 4px;
 }
 
 .rtl .nav-actions {
     margin-left: 0;
-    margin-right: auto;
+    margin-right: 4px;
 }
 
 .nav-item:hover .nav-actions {
