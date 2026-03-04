@@ -377,14 +377,31 @@
         const ar = all.filter(p => p.status === 'At Risk').length;
         const of2 = all.filter(p => p.status === 'Off Track').length;
         const dn = all.filter(p => p.status === 'Done').length;
-        animateCount($('statTotalVal'), tot);
-        animateCount($('statOnTrackVal'), ot);
-        animateCount($('statAtRiskVal'), ar);
-        animateCount($('statOffTrackVal'), of2);
-        animateCount($('statDoneVal'), dn);
+
+        $('statTotalVal').textContent = '0';
+        $('statOnTrackVal').textContent = '0';
+        $('statAtRiskVal').textContent = '0';
+        $('statOffTrackVal').textContent = '0';
+        $('statDoneVal').textContent = '0';
+
+        observeAndAnimate('statsBar', () => {
+            animateCount($('statTotalVal'), tot);
+            animateCount($('statOnTrackVal'), ot);
+            animateCount($('statAtRiskVal'), ar);
+            animateCount($('statOffTrackVal'), of2);
+            animateCount($('statDoneVal'), dn);
+        });
+
         renderPortfolioCards();
-        animateStatusChart();
-        animateProgressChart();
+
+        const sCtx = $('chartStatus')?.getContext('2d');
+        if (sCtx) sCtx.clearRect(0, 0, 300, 300);
+        const pCtx = $('chartProgress')?.getContext('2d');
+        if (pCtx) pCtx.clearRect(0, 0, 500, 300);
+
+        observeAndAnimate('chartStatus', animateStatusChart);
+        observeAndAnimate('chartProgress', animateProgressChart);
+
         renderBlockers();
         renderMilestones();
     }
@@ -415,12 +432,14 @@
         </div>`;
         }).join('');
         // Animate progress bars
-        setTimeout(() => {
-            document.querySelectorAll('.pcard-progress-fill[data-target]').forEach(el => {
-                el.style.transition = 'width 0.8s cubic-bezier(0.22,1,0.36,1)';
-                el.style.width = el.dataset.target + '%';
-            });
-        }, 50);
+        observeAndAnimate('portfolioCards', () => {
+            setTimeout(() => {
+                document.querySelectorAll('.pcard-progress-fill[data-target]').forEach(el => {
+                    el.style.transition = 'width 0.8s cubic-bezier(0.22,1,0.36,1)';
+                    el.style.width = el.dataset.target + '%';
+                });
+            }, 50);
+        });
     }
 
     window._navPortfolio = function (id) { navigateTo('portfolio', id); };
@@ -843,6 +862,20 @@
     }
 
     // ========== HELPERS ==========
+    function observeAndAnimate(elementId, animateFn) {
+        const el = $(elementId);
+        if (!el) return;
+        const observer = new IntersectionObserver((entries, obs) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    animateFn();
+                    obs.disconnect();
+                }
+            });
+        }, { threshold: 0.1 });
+        observer.observe(el);
+    }
+
     function formatDate(str) { if (!str) return '—'; const d = new Date(str); const m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; return m[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear(); }
 
     $('blockerAlert')?.addEventListener('click', () => { if (currentView !== 'hub') navigateTo('hub', null); setTimeout(() => $('blockerList')?.scrollIntoView({ behavior: 'smooth' }), 100); });
