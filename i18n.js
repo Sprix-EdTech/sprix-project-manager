@@ -8,7 +8,7 @@ const TRANSLATIONS = {
     'auth.placeholder': { en: 'Password', ja: 'パスワード', ar: 'كلمة المرور' },
     'auth.btn': { en: 'Unlock', ja: 'ロック解除', ar: 'فتح القفل' },
     'auth.error': { en: 'Incorrect password', ja: 'パスワードが間違っています', ar: 'كلمة المرور غير صحيحة' },
-    'auth.subtitle': { en: 'Project Progress Manager', ja: 'プロジェクト進捗管理', ar: 'مدير تقدم المشاريع' },
+    'auth.subtitle': { en: 'Project Progress Manager\u00a0\u00a0\u00a0Ver 1.0', ja: 'プロジェクト進捗管理\u00a0\u00a0\u00a0Ver 1.0', ar: 'مدير تقدم المشاريع\u00a0\u00a0\u00a0Ver 1.0' },
 
     // ---- Navigation ----
     'nav.hub': { en: 'Portfolio Hub', ja: 'ポートフォリオ・ハブ', ar: 'مركز المحفظة' },
