@@ -638,7 +638,12 @@
         document.body.style.overflow = 'hidden';
     };
 
-    function closeModal() { $('modalOverlay').style.display = 'none'; document.body.style.overflow = ''; }
+    function closeModal() {
+        const ov = $('modalOverlay');
+        if (ov.style.display === 'none') return;
+        ov.classList.add('closing');
+        setTimeout(() => { ov.style.display = 'none'; ov.classList.remove('closing'); document.body.style.overflow = ''; }, 350);
+    }
 
     // ========== PROJECT CRUD ==========
     let editingProjectId = null;
@@ -729,7 +734,12 @@
         }
     };
 
-    function closeCrudModal() { $('crudOverlay').style.display = 'none'; editingProjectId = null; }
+    function closeCrudModal() {
+        const ov = $('crudOverlay');
+        if (ov.style.display === 'none') return;
+        ov.classList.add('closing');
+        setTimeout(() => { ov.style.display = 'none'; ov.classList.remove('closing'); editingProjectId = null; }, 350);
+    }
 
     // ========== PORTFOLIO CRUD ==========
     let editingPfId = null;
@@ -828,7 +838,12 @@
         }
     };
 
-    function closePfCrudModal() { $('pfCrudOverlay').style.display = 'none'; editingPfId = null; }
+    function closePfCrudModal() {
+        const ov = $('pfCrudOverlay');
+        if (ov.style.display === 'none') return;
+        ov.classList.add('closing');
+        setTimeout(() => { ov.style.display = 'none'; ov.classList.remove('closing'); editingPfId = null; }, 350);
+    }
 
     // ========== SETTINGS ==========
     function setupSettings() {
