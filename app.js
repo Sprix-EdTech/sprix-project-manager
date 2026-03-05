@@ -172,19 +172,19 @@
             currentView = 'table'; currentPortfolio = portfolio;
             const pf = PORTFOLIOS.find(p => p.id === portfolio);
             $('pageTitle').textContent = pf ? (t('pf.' + pf.id) || pf.name) : 'Projects';
-            showView('viewTable'); renderTable();
+            showView('viewTable'); renderTable(); syncTabs('table');
         } else if (view === 'all-table') {
             currentView = 'table'; currentPortfolio = null;
             $('pageTitle').textContent = t('nav.allTable');
-            showView('viewTable'); renderTable();
+            showView('viewTable'); renderTable(); syncTabs('table');
         } else if (view === 'all-kanban') {
             currentView = 'kanban'; currentPortfolio = null;
             $('pageTitle').textContent = t('nav.kanban');
-            showView('viewKanban'); renderKanban();
+            showView('viewKanban'); renderKanban(); syncTabs('kanban');
         } else if (view === 'all-timeline') {
             currentView = 'timeline'; currentPortfolio = null;
             $('pageTitle').textContent = t('nav.timeline');
-            showView('viewTimeline'); renderTimeline();
+            showView('viewTimeline'); renderTimeline(); syncTabs('timeline');
         } else if (view === 'settings') {
             currentView = 'settings'; currentPortfolio = null;
             $('pageTitle').textContent = t('settings.title');
@@ -192,9 +192,16 @@
         }
     }
 
+    function syncTabs(activeTab) {
+        document.querySelectorAll('#sharedViewTabs .view-tab').forEach(vt => vt.classList.toggle('active', vt.dataset.tab === activeTab));
+    }
+
     function showView(id) {
         document.querySelectorAll('.view-section').forEach(v => v.style.display = 'none');
         $(id).style.display = 'block';
+        const tabViews = ['viewTable', 'viewKanban', 'viewTimeline'];
+        const tabs = $('sharedViewTabs');
+        if (tabs) tabs.style.display = tabViews.includes(id) ? 'flex' : 'none';
     }
 
     // ========== THEME ==========
@@ -297,13 +304,13 @@
 
     // ========== VIEW TABS ==========
     function setupViewTabs() {
-        document.querySelectorAll('.view-tab').forEach(tab => {
+        document.querySelectorAll('#sharedViewTabs .view-tab').forEach(tab => {
             tab.addEventListener('click', () => {
                 const t2 = tab.dataset.tab;
                 if (t2 === 'table') { showView('viewTable'); currentView = 'table'; renderTable(); }
                 else if (t2 === 'kanban') { showView('viewKanban'); currentView = 'kanban'; renderKanban(); }
                 else if (t2 === 'timeline') { showView('viewTimeline'); currentView = 'timeline'; renderTimeline(); }
-                document.querySelectorAll('.view-tab').forEach(vt => vt.classList.toggle('active', vt.dataset.tab === t2));
+                syncTabs(t2);
             });
         });
     }

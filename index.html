@@ -205,16 +205,21 @@
                 </div>
             </section>
 
+            <!-- Shared View Tabs (Table / Kanban / Timeline) -->
+            <div class="view-header-row" id="sharedViewTabs" style="display:none;">
+                <div class="view-tabs">
+                    <button class="view-tab active" data-tab="table">📋 <span
+                            data-i18n="tab.table">Table</span></button>
+                    <button class="view-tab" data-tab="kanban">📌 <span data-i18n="tab.kanban">Kanban</span></button>
+                    <button class="view-tab" data-tab="timeline">📅 <span
+                            data-i18n="tab.timeline">Timeline</span></button>
+                </div>
+                <button class="btn-add-project" id="btnAddProject" data-i18n="crud.addProject">＋ Add
+                    Project</button>
+            </div>
+
             <!-- Table View -->
             <section class="view-section" id="viewTable" style="display:none;">
-                <div class="view-header-row">
-                    <div class="view-tabs"><button class="view-tab active" data-tab="table">📋 <span
-                                data-i18n="tab.table">Table</span></button><button class="view-tab" data-tab="kanban">📌
-                            <span data-i18n="tab.kanban">Kanban</span></button><button class="view-tab"
-                            data-tab="timeline">📅 <span data-i18n="tab.timeline">Timeline</span></button></div>
-                    <button class="btn-add-project" id="btnAddProject" data-i18n="crud.addProject">＋ Add
-                        Project</button>
-                </div>
                 <div class="table-container">
                     <table class="project-table" id="projectTable">
                         <thead id="projectTableHead"></thead>
@@ -225,26 +230,11 @@
 
             <!-- Kanban View -->
             <section class="view-section" id="viewKanban" style="display:none;">
-                <div class="view-header-row">
-                    <div class="view-tabs"><button class="view-tab" data-tab="table">📋 <span
-                                data-i18n="tab.table">Table</span></button><button class="view-tab active"
-                            data-tab="kanban">📌 <span data-i18n="tab.kanban">Kanban</span></button><button
-                            class="view-tab" data-tab="timeline">📅 <span
-                                data-i18n="tab.timeline">Timeline</span></button></div>
-                    <button class="btn-add-project" onclick="window._openCrudModal()" data-i18n="crud.addProject">＋ Add
-                        Project</button>
-                </div>
                 <div class="kanban-board" id="kanbanBoard"></div>
             </section>
 
             <!-- Timeline View -->
             <section class="view-section" id="viewTimeline" style="display:none;">
-                <div class="view-header-row">
-                    <div class="view-tabs"><button class="view-tab" data-tab="table">📋 <span
-                                data-i18n="tab.table">Table</span></button><button class="view-tab" data-tab="kanban">📌
-                            <span data-i18n="tab.kanban">Kanban</span></button><button class="view-tab active"
-                            data-tab="timeline">📅 <span data-i18n="tab.timeline">Timeline</span></button></div>
-                </div>
                 <div class="timeline-container"><canvas id="timelineCanvas" width="1200" height="600"></canvas></div>
             </section>
 
