@@ -435,6 +435,11 @@ select {
     color: var(--text-sidebar-active);
 }
 
+[data-theme="dark"] .nav-item.active {
+    background: linear-gradient(135deg, rgba(99, 102, 241, 0.35), rgba(6, 182, 212, 0.2));
+    color: #ffffff !important;
+}
+
 .nav-item.active::before {
     content: '';
     position: absolute;
