@@ -329,7 +329,7 @@
         });
     }
     function updateBlockerCount() {
-        const c = projects.filter(p => p.blockers && p.blockers.trim()).length;
+        const c = getFilteredProjects().filter(p => p.blockers && p.blockers.trim()).length;
         $('blockerCount').textContent = c;
     }
 
@@ -387,7 +387,7 @@
 
     // ========== HUB ==========
     function renderHub() {
-        const all = projects;
+        const all = getFilteredProjects();
         const tot = all.length;
         const ot = all.filter(p => p.status === 'On Track').length;
         const ar = all.filter(p => p.status === 'At Risk').length;
@@ -435,8 +435,9 @@
     }
 
     function renderPortfolioCards() {
+        const allFiltered = getFilteredProjects();
         $('portfolioCards').innerHTML = PORTFOLIOS.map(pf => {
-            const ps = projects.filter(p => p.portfolio === pf.id);
+            const ps = allFiltered.filter(p => p.portfolio === pf.id);
             const avg = ps.length ? Math.round(ps.reduce((s, p) => s + p.progress, 0) / ps.length) : 0;
             const sc = {}; STATUS_LIST.forEach(s => sc[s] = 0); ps.forEach(p => sc[p.status]++);
             return `<div class="portfolio-card" data-portfolio="${pf.id}" onclick="window._navPortfolio('${pf.id}')">
@@ -461,14 +462,14 @@
     window._navPortfolio = function (id) { navigateTo('portfolio', id); };
 
     function renderBlockers() {
-        const bs = projects.filter(p => p.blockers && p.blockers.trim());
+        const bs = getFilteredProjects().filter(p => p.blockers && p.blockers.trim());
         $('blockerList').innerHTML = bs.length ? bs.map(p => `<div class="blocker-item" onclick="window._openModal(${p.id})"><span class="blocker-project">${p.name}</span><span class="blocker-text">${p.blockers}</span><span class="blocker-owner">${p.owner}</span></div>`).join('') :
             `<div class="empty-state"><div class="empty-state-icon">🎉</div><div class="empty-state-text">${t('hub.noBlockers')}</div></div>`;
     }
 
     function renderMilestones() {
         const now = new Date(), in30 = new Date(now.getTime() + 30 * 86400000);
-        const ms = projects.filter(p => { if (!p.targetdate) return false; const d = new Date(p.targetdate); return d >= now && d <= in30; }).sort((a, b) => new Date(a.targetdate) - new Date(b.targetdate));
+        const ms = getFilteredProjects().filter(p => { if (!p.targetdate) return false; const d = new Date(p.targetdate); return d >= now && d <= in30; }).sort((a, b) => new Date(a.targetdate) - new Date(b.targetdate));
         $('milestoneList').innerHTML = ms.length ? ms.map(p => `<div class="milestone-item" onclick="window._openModal(${p.id})"><span class="milestone-date">${formatDate(p.targetdate)}</span><span class="milestone-project">${p.name}</span><span class="milestone-text">${p.nextmilestone}</span></div>`).join('') :
             `<div class="empty-state"><div class="empty-state-icon">📅</div><div class="empty-state-text">${t('hub.noMilestones')}</div></div>`;
     }
@@ -481,7 +482,8 @@
         canvas.width = 300 * dpr; canvas.height = 300 * dpr;
         canvas.style.width = '300px'; canvas.style.height = '300px';
         ctx.scale(dpr, dpr);
-        const counts = STATUS_LIST.map(s => projects.filter(p => p.status === s).length);
+        const allFiltered = getFilteredProjects();
+        const counts = STATUS_LIST.map(s => allFiltered.filter(p => p.status === s).length);
         const total = counts.reduce((a, b) => a + b, 0) || 1;
         const colors = STATUS_LIST.map(s => STATUS_COLORS[s]);
         const cx = 150, cy = 140, r = 100, ir = 60;
@@ -511,7 +513,8 @@
         canvas.width = w * dpr; canvas.height = h * dpr;
         canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
         ctx.scale(dpr, dpr);
-        const data = PORTFOLIOS.map(pf => { const ps = projects.filter(p => p.portfolio === pf.id); return { name: (t('pf.' + pf.id) || pf.name).slice(0, 12), avg: ps.length ? Math.round(ps.reduce((s, p) => s + p.progress, 0) / ps.length) : 0, color: pf.color }; });
+        const allFiltered = getFilteredProjects();
+        const data = PORTFOLIOS.map(pf => { const ps = allFiltered.filter(p => p.portfolio === pf.id); return { name: (t('pf.' + pf.id) || pf.name).slice(0, 12), avg: ps.length ? Math.round(ps.reduce((s, p) => s + p.progress, 0) / ps.length) : 0, color: pf.color }; });
         const margin = { top: 20, right: 20, bottom: 50, left: 40 };
         const chartW = w - margin.left - margin.right, chartH = h - margin.top - margin.bottom;
         const gap = chartW / data.length, barW = gap * 0.6;
