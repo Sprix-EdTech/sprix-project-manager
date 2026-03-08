@@ -296,7 +296,13 @@
     function getFilteredProjects() {
         let list = projects;
         if (currentPortfolio) list = list.filter(p => p.portfolio === currentPortfolio);
-        if (searchQuery) list = list.filter(p => p.name.toLowerCase().includes(searchQuery) || p.objective.toLowerCase().includes(searchQuery) || p.owner.toLowerCase().includes(searchQuery));
+        if (searchQuery) {
+            list = list.filter(p =>
+                (p.name && p.name.toLowerCase().includes(searchQuery)) ||
+                (p.objective && p.objective.toLowerCase().includes(searchQuery)) ||
+                (p.owner && p.owner.toLowerCase().includes(searchQuery))
+            );
+        }
         if (activeFilters.status && activeFilters.status.length) list = list.filter(p => activeFilters.status.includes(p.status));
         if (activeFilters.owner && activeFilters.owner.length) list = list.filter(p => activeFilters.owner.includes(p.owner));
         return list;
