@@ -71,9 +71,9 @@ const TRANSLATIONS = {
     'hub.pfProgress': { en: 'Portfolio Progress', ja: 'ポートフォリオ進捗', ar: 'تقدم المحفظة' },
 
     // ---- View Tabs ----
-    'tab.table': { en: '📋 Table', ja: '📋 テーブル', ar: '📋 جدول' },
-    'tab.kanban': { en: '📌 Kanban', ja: '📌 カンバン', ar: '📌 كانبان' },
-    'tab.timeline': { en: '📅 Timeline', ja: '📅 タイムライン', ar: '📅 الجدول الزمني' },
+    'tab.table': { en: 'Table', ja: 'テーブル', ar: 'جدول' },
+    'tab.kanban': { en: 'Kanban', ja: 'カンバン', ar: 'كانبان' },
+    'tab.timeline': { en: 'Timeline', ja: 'タイムライン', ar: 'الجدول الزمني' },
 
     // ---- Filters ----
     'filter.status': { en: 'Status', ja: 'ステータス', ar: 'الحالة' },
