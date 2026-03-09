@@ -83,6 +83,8 @@
         updateBadges();
         startClocks();
         loadFontSize();
+        setupRipple();
+        setupMagnetic();
     }
 
     // --- Data Persistence (Supabase) ---
@@ -422,16 +424,36 @@
         renderMilestones();
     }
     function animateCount(el, target) {
-        const start = parseInt(el.textContent) || 0;
-        if (start === target) { el.textContent = target; return; }
-        const dur = 600, startT = performance.now();
-        function tick(now) {
-            const p = Math.min((now - startT) / dur, 1);
-            const ease = 1 - Math.pow(1 - p, 3);
-            el.textContent = Math.round(start + (target - start) * ease);
-            if (p < 1) requestAnimationFrame(tick);
+        const targetStr = String(target);
+        if (el.dataset.val === targetStr) return;
+        el.dataset.val = targetStr;
+
+        let html = '';
+        for (let i = 0; i < targetStr.length; i++) {
+            const digitStr = targetStr[i];
+            if (isNaN(parseInt(digitStr))) {
+                html += `<span class="odometer-digit">${digitStr}</span>`;
+                continue;
+            }
+            let col = '';
+            for (let j = 0; j <= 9; j++) col += `<span class="odometer-digit-num">${j}</span>`;
+            html += `<span class="odometer-digit"><span class="odometer-digit-inner" style="transform:translateY(0em)">${col}</span></span>`;
         }
-        requestAnimationFrame(tick);
+        el.innerHTML = html;
+
+        // Trigger reflow
+        void el.offsetWidth;
+
+        const inners = el.querySelectorAll('.odometer-digit-inner');
+        inners.forEach((inner, i) => {
+            const digitStr = targetStr[i];
+            if (!isNaN(parseInt(digitStr))) {
+                const digit = parseInt(digitStr);
+                const delay = (targetStr.length - i - 1) * 0.1;
+                inner.style.transition = `transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s`;
+                inner.style.transform = `translateY(-${digit * 1.1}em)`;
+            }
+        });
     }
 
     function renderPortfolioCards() {
@@ -736,8 +758,30 @@
                 return;
             }
         }
+
+        if (data.status === 'Done') {
+            fireConfetti();
+        }
+
         closeCrudModal(); refreshCurrentView();
         showToast(t('toast.saved'));
+    }
+
+    function fireConfetti() {
+        if (typeof confetti !== 'undefined') {
+            const count = 200;
+            const defaults = { origin: { y: 0.8 }, zIndex: 9999 };
+            function fire(particleRatio, opts) {
+                confetti(Object.assign({}, defaults, opts, {
+                    particleCount: Math.floor(count * particleRatio)
+                }));
+            }
+            fire(0.25, { spread: 26, startVelocity: 55 });
+            fire(0.2, { spread: 60 });
+            fire(0.35, { spread: 100, decay: 0.91, scalar: 0.8 });
+            fire(0.1, { spread: 120, startVelocity: 25, decay: 0.92, scalar: 1.2 });
+            fire(0.1, { spread: 120, startVelocity: 45 });
+        }
     }
 
     window._deleteProject = async function (id) {
@@ -885,6 +929,100 @@
     function importJSON(e) {
         showToast("JSON Import is disabled in the online database version.");
         e.target.value = '';
+    }
+
+    // ========== PREMIUM ANIMATIONS ==========
+    function setupRipple() {
+        const selectors = '.btn-primary, .btn-outline, .btn-icon, .nav-item, .view-tab, .portfolio-card, .blocker-item, .milestone-item';
+        document.body.addEventListener('click', function (e) {
+            const target = e.target.closest(selectors);
+            if (!target) return;
+
+            target.classList.add('ripple-target');
+
+            const circle = document.createElement('span');
+            const diameter = Math.max(target.clientWidth, target.clientHeight);
+            const radius = diameter / 2;
+
+            const rect = target.getBoundingClientRect();
+            circle.style.width = circle.style.height = `${diameter}px`;
+            circle.style.left = `${e.clientX - rect.left - radius}px`;
+            circle.style.top = `${e.clientY - rect.top - radius}px`;
+            circle.classList.add('ripple');
+
+            const ripple = target.querySelector('.ripple');
+            if (ripple) {
+                ripple.remove();
+            }
+
+            target.appendChild(circle);
+
+            setTimeout(() => {
+                circle.remove();
+            }, 600);
+        });
+    }
+
+    function setupMagnetic() {
+        const magnets = document.querySelectorAll('.btn-primary, .btn-icon, .btn-add-project, .nav-item');
+        magnets.forEach(magnet => {
+            magnet.addEventListener('mousemove', function (e) {
+                const rect = magnet.getBoundingClientRect();
+                const x = e.clientX - rect.left - rect.width / 2;
+                const y = e.clientY - rect.top - rect.height / 2;
+
+                // Max translation is 10px
+                const strength = 0.2;
+                const tx = x * strength;
+                const ty = y * strength;
+
+                magnet.style.transform = `translate(${tx}px, ${ty}px)`;
+                magnet.style.transition = 'transform 0.1s ease-out';
+            });
+
+            magnet.addEventListener('mouseleave', function () {
+                magnet.style.transform = 'translate(0px, 0px)';
+                magnet.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+            });
+        });
+
+        // Setup observer for dynamically added buttons (like in Kanban/TableView)
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                mutation.addedNodes.forEach((node) => {
+                    if (node.nodeType === 1) {
+                        const newMagnets = node.querySelectorAll ? node.querySelectorAll('.btn-primary, .btn-icon, .btn-add-project, .nav-item') : [];
+                        const isMagnet = node.matches && node.matches('.btn-primary, .btn-icon, .btn-add-project, .nav-item');
+                        const elements = isMagnet ? [node, ...newMagnets] : Array.from(newMagnets);
+
+                        elements.forEach(magnet => {
+                            // Avoid double binding
+                            if (!magnet.dataset.magnetic) {
+                                magnet.dataset.magnetic = "true";
+                                magnet.addEventListener('mousemove', function (e) {
+                                    const rect = magnet.getBoundingClientRect();
+                                    const x = e.clientX - rect.left - rect.width / 2;
+                                    const y = e.clientY - rect.top - rect.height / 2;
+                                    const tx = x * 0.2;
+                                    const ty = y * 0.2;
+                                    magnet.style.transform = `translate(${tx}px, ${ty}px)`;
+                                    magnet.style.transition = 'transform 0.1s ease-out';
+                                });
+                                magnet.addEventListener('mouseleave', function () {
+                                    magnet.style.transform = 'translate(0px, 0px)';
+                                    magnet.style.transition = 'transform 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94)';
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        });
+
+        observer.observe(document.body, { childList: true, subtree: true });
+
+        // Mark initial items to avoid double binding later just in case
+        magnets.forEach(m => m.dataset.magnetic = "true");
     }
 
     function download(name, content, type) { const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([content], { type })); a.download = name; a.click(); }
