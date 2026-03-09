@@ -790,6 +790,8 @@
         if (!error) {
             projects = projects.filter(p => p.id !== id);
             refreshCurrentView();
+            try { closeModal(); } catch (e) { }
+            try { closeCrudModal(); } catch (e) { }
             showToast(t('toast.deleted'));
         }
     };
