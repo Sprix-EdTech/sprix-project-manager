@@ -935,7 +935,7 @@
 
     // ========== PREMIUM ANIMATIONS ==========
     function setupRipple() {
-        const selectors = '.btn-primary, .btn-outline, .btn-icon, .nav-item, .view-tab, .portfolio-card, .blocker-item, .milestone-item';
+        const selectors = '.btn-primary, .btn-outline, .btn-icon, .nav-item, .view-tab, .portfolio-card, .blocker-item, .milestone-item, .btn-add-project';
         document.body.addEventListener('click', function (e) {
             const target = e.target.closest(selectors);
             if (!target) return;
