@@ -933,6 +933,51 @@
         e.target.value = '';
     }
 
+    // ========== TUTORIAL ==========
+    let tutorialCurrent = 0;
+    const tutorialSteps = [
+        { title: "Portfolio Hub", text: "全プロジェクトの進捗とブロック状態を俯瞰できます。各カードをクリックすると詳細にジャンプします。" },
+        { title: "表示の切り替え", text: "テーブル、カンバン、タイムラインの3つの視点をワンクリックで切り替え可能です。" },
+        { title: "プロジェクト追加", text: "右上の「+ Add Project」からいつでも新しいプロジェクトを追加・追跡できます。" },
+        { title: "プレニアム体験", text: "ダークモード切替やエクスポートの他、心地よい波紋エフェクト等の操作感をお楽しみください！" }
+    ];
+
+    window._startTutorial = function () {
+        tutorialCurrent = 0;
+        showTutorialStep();
+    };
+
+    window._nextTutorialStep = function () {
+        tutorialCurrent++;
+        showTutorialStep();
+    };
+
+    function showTutorialStep() {
+        if (tutorialCurrent >= tutorialSteps.length) {
+            closeModal();
+            showToast("チュートリアルが完了しました！");
+            return;
+        }
+        const s = tutorialSteps[tutorialCurrent];
+        $('modalTitle').textContent = `チュートリアル (${tutorialCurrent + 1}/${tutorialSteps.length})`;
+        $('modalPortfolioBadge').style.display = 'none';
+        $('modalEditBtn').style.display = 'none';
+        $('modalDeleteBtn').style.display = 'none';
+
+        $('modalBody').innerHTML = `
+            <div style="text-align: center; padding: 20px 10px;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">💡</div>
+                <h3 style="margin-bottom: 20px; font-size: 1.4rem;">${s.title}</h3>
+                <p style="font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 30px;">${s.text}</p>
+                <button class="btn-primary ripple-target" onclick="window._nextTutorialStep()" style="padding: 12px 30px; font-size: 1.1rem; filter: none;">
+                    ${tutorialCurrent < tutorialSteps.length - 1 ? '次へ (Next) ➔' : '完了 (Finish) ✅'}
+                    <span class="ripple" style="transform: scale(0); opacity: 0;"></span>
+                </button>
+            </div>
+        `;
+        $('modalOverlay').style.display = 'flex';
+    }
+
     // ========== PREMIUM ANIMATIONS ==========
     function setupRipple() {
         const selectors = '.btn-primary, .btn-outline, .btn-icon, .nav-item, .view-tab, .portfolio-card, .blocker-item, .milestone-item, .btn-add-project';
