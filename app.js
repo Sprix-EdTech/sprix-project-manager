@@ -471,7 +471,31 @@
 
     function renderPortfolioCards() {
         const allFiltered = getFilteredProjects();
-        $('portfolioCards').innerHTML = PORTFOLIOS.map(pf => {
+        const container = $('portfolioCards');
+        const existingCards = container.querySelectorAll('.portfolio-card');
+
+        // If cards already exist, just update their contents to prevent jitter and maintain animations
+        if (existingCards.length === PORTFOLIOS.length) {
+            PORTFOLIOS.forEach((pf, i) => {
+                const card = existingCards[i];
+                const ps = allFiltered.filter(p => p.portfolio === pf.id);
+                const avg = ps.length ? Math.round(ps.reduce((s, p) => s + p.progress, 0) / ps.length) : 0;
+                const sc = {}; STATUS_LIST.forEach(s => sc[s] = 0); ps.forEach(p => sc[p.status]++);
+
+                card.querySelector('.pcard-count').textContent = `${ps.length} ${t('hub.projects')}`;
+                card.querySelector('.pcard-progress-value').textContent = `${avg}%`;
+                
+                const fill = card.querySelector('.pcard-progress-fill');
+                fill.dataset.target = avg;
+                fill.style.width = avg + '%';
+                
+                card.querySelector('.pcard-status-bar').innerHTML = STATUS_LIST.map(s => `<div class="pcard-status-segment" style="flex:${sc[s]};background:${STATUS_COLORS[s]}"></div>`).join('');
+                card.querySelector('.pcard-stats').innerHTML = STATUS_LIST.filter(s => sc[s] > 0).map(s => `<div class="pcard-stat"><span class="pcard-stat-dot" style="background:${STATUS_COLORS[s]}"></span>${sc[s]} ${s}</div>`).join('');
+            });
+            return; // Skip full re-render
+        }
+
+        container.innerHTML = PORTFOLIOS.map(pf => {
             const ps = allFiltered.filter(p => p.portfolio === pf.id);
             const avg = ps.length ? Math.round(ps.reduce((s, p) => s + p.progress, 0) / ps.length) : 0;
             const sc = {}; STATUS_LIST.forEach(s => sc[s] = 0); ps.forEach(p => sc[p.status]++);
@@ -483,7 +507,8 @@
             <div class="pcard-stats">${STATUS_LIST.filter(s => sc[s] > 0).map(s => `<div class="pcard-stat"><span class="pcard-stat-dot" style="background:${STATUS_COLORS[s]}"></span>${sc[s]} ${s}</div>`).join('')}</div>
         </div>`;
         }).join('');
-        // Animate progress bars
+
+        // Animate progress bars for the first time
         observeAndAnimate('portfolioCards', () => {
             setTimeout(() => {
                 document.querySelectorAll('.pcard-progress-fill[data-target]').forEach(el => {
