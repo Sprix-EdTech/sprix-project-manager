@@ -967,15 +967,19 @@
 
     // ========== TUTORIAL ==========
     let tutorialCurrent = 0;
-    const tutorialSteps = [
-        { title: "Portfolio Hub", text: "全プロジェクトの進捗とブロック状態を俯瞰できます。各カードをクリックすると詳細にジャンプします。" },
-        { title: "表示の切り替え", text: "テーブル、カンバン、タイムラインの3つの視点をワンクリックで切り替え可能です。" },
-        { title: "プロジェクト追加", text: "右上の「+ Add Project」からいつでも新しいプロジェクトを追加・追跡できます。" },
-        { title: "プレニアム体験", text: "ダークモード切替やエクスポートの他、心地よい波紋エフェクト等の操作感をお楽しみください！" }
-    ];
+    // We dynamically generate steps from i18n when tutorial starts
+    let tutorialSteps = [];
 
     window._startTutorial = function () {
         tutorialCurrent = 0;
+        tutorialSteps = [
+            { title: t('tut.step1.title'), text: t('tut.step1.text') },
+            { title: t('tut.step2.title'), text: t('tut.step2.text') },
+            { title: t('tut.step3.title'), text: t('tut.step3.text') },
+            { title: t('tut.step4.title'), text: t('tut.step4.text') },
+            { title: t('tut.step5.title'), text: t('tut.step5.text') },
+            { title: t('tut.step6.title'), text: t('tut.step6.text') }
+        ];
         showTutorialStep();
     };
 
@@ -987,11 +991,11 @@
     function showTutorialStep() {
         if (tutorialCurrent >= tutorialSteps.length) {
             closeModal();
-            showToast("チュートリアルが完了しました！");
+            showToast(currentLang === 'ja' ? "チュートリアルが完了しました！" : (currentLang === 'ar' ? "تم الانتهاء من البرنامج التعليمي!" : "Tutorial completed!"));
             return;
         }
         const s = tutorialSteps[tutorialCurrent];
-        $('modalTitle').textContent = `チュートリアル (${tutorialCurrent + 1}/${tutorialSteps.length})`;
+        $('modalTitle').textContent = (currentLang === 'ja' ? `チュートリアル` : (currentLang === 'ar' ? `البرنامج التعليمي` : `Tutorial`)) + ` (${tutorialCurrent + 1}/${tutorialSteps.length})`;
         $('modalPortfolioBadge').style.display = 'none';
         $('modalEditBtn').style.display = 'none';
         $('modalDeleteBtn').style.display = 'none';
@@ -1002,7 +1006,7 @@
                 <h3 style="margin-bottom: 20px; font-size: 1.4rem;">${s.title}</h3>
                 <p style="font-size: 1.1rem; line-height: 1.6; color: var(--text-secondary); margin-bottom: 30px;">${s.text}</p>
                 <button class="btn-primary ripple-target" onclick="window._nextTutorialStep()" style="padding: 12px 30px; font-size: 1.1rem; filter: none;">
-                    ${tutorialCurrent < tutorialSteps.length - 1 ? '次へ (Next) ➔' : '完了 (Finish) ✅'}
+                    ${tutorialCurrent < tutorialSteps.length - 1 ? t('tut.next') : t('tut.finish')}
                     <span class="ripple" style="transform: scale(0); opacity: 0;"></span>
                 </button>
             </div>

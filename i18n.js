@@ -156,6 +156,22 @@ const TRANSLATIONS = {
     'toast.backupDone': { en: 'Backup saved ✓', ja: 'バックアップ保存完了 ✓', ar: 'تم حفظ النسخة ✓' },
     'toast.restored': { en: 'Data restored ✓', ja: 'データ復元完了 ✓', ar: 'تمت استعادة البيانات ✓' },
     'toast.nameRequired': { en: 'Project name is required', ja: 'プロジェクト名は必須です', ar: 'اسم المشروع مطلوب' },
+
+    // ---- Tutorial ----
+    'tut.step1.title': { en: 'Portfolio Hub', ja: 'ポートフォリオハブ', ar: 'مركز المحفظة' },
+    'tut.step1.text': { en: 'View all your projects and block status at a glance. Click on each card to jump to details.', ja: '全プロジェクトの進捗とブロック状態を俯瞰できます。各カードをクリックすると詳細にジャンプします。', ar: 'عرض جميع مشاريعك وحالة الحظر في لمحة. انقر على كل بطاقة للانتقال إلى التفاصيل.' },
+    'tut.step2.title': { en: 'Switching Views', ja: '表示の切り替え', ar: 'تبديل العروض' },
+    'tut.step2.text': { en: 'Switch between Table, Kanban, and Timeline views to visualize your data differently.', ja: 'テーブル、カンバン、タイムラインの3つの視点をワンクリックで切り替え可能です。', ar: 'قم بالتبديل بين عروض الجدول وكانبان والجدول الزمني لتصور بياناتك بشكل مختلف.' },
+    'tut.step3.title': { en: 'Advanced Search & Filtering', ja: '高度な検索と絞り込み', ar: 'البحث المتقدم والتصفية' },
+    'tut.step3.text': { en: 'Quickly find what you need by typing in the search box, or filter by Status, Owner, or Blockers. Click the "X" in the search box to clear it instantly.', ja: 'サーチウィンドウ、ステータス、責任者、ブロッカーなど、さまざまな検索・絞り込みが可能です。検索窓の「✕」で一瞬でクリアできます。', ar: 'اعثر بسرعة على ما تحتاجه عن طريق الكتابة في مربع البحث ، أو قم بالتصفية حسب الحالة أو المالك أو أدوات الحظر. انقر فوق "X" في مربع البحث لمسحه على الفور.' },
+    'tut.step4.title': { en: 'Creating Projects', ja: 'プロジェクト追加', ar: 'إنشاء مشاريع' },
+    'tut.step4.text': { en: 'Add and track new projects anytime from the "+ Add Project" button.', ja: '右上の「+ Add Project」からいつでも新しいプロジェクトを追加・追跡できます。', ar: 'أضف وتتبع مشاريع جديدة في أي وقت من زر "+ أضف مشروع".' },
+    'tut.step5.title': { en: 'Themes & Localization', ja: 'テーマと言語設定', ar: 'المظاهر واللغات' },
+    'tut.step5.text': { en: 'Switch easily between Light and Dark mode, or change language to English, Japanese, or Arabic from the top menu.', ja: '上部メニューから言語（英語・日本語・アラビア語）を切り替えたり、目に優しいダークモードに変更できます。', ar: 'قم بالتبديل بسهولة بين الوضع الفاتح والداكن ، أو قم بتغيير اللغة إلى الإنجليزية أو اليابانية أو العربية.' },
+    'tut.step6.title': { en: 'Premium Experience', ja: 'プレミアム体験', ar: 'تجربة مميزة' },
+    'tut.step6.text': { en: 'Enjoy a seamless experience with smooth ripple effects, magnetic buttons, and live dashboard stats!', ja: '心地よい波紋エフェクトや吸い付くボタン、アニメーションするダッシュボード統計など、洗練された操作感をお楽しみください！', ar: 'استمتع بتجربة سلسة مع تأثيرات التموج السلسة والأزرار المغناطيسية وإحصائيات لوحة القيادة الحية!' },
+    'tut.next': { en: 'Next ➔', ja: '次へ ➔', ar: 'التالي ➔' },
+    'tut.finish': { en: 'Finish ✅', ja: '完了 ✅', ar: 'إنهاء ✅' }
 };
 
 let currentLang = 'en';
