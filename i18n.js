@@ -30,6 +30,7 @@ const TRANSLATIONS = {
     'pf.monetization': { en: 'Monetization', ja: '収益化', ar: 'التسييل' },
     'pf.operations': { en: 'Operations & Governance', ja: 'オペレーション＆ガバナンス', ar: 'العمليات والحوكمة' },
     'pf.people': { en: 'People & Org', ja: '人事＆組織', ar: 'الأفراد والتنظيم' },
+    'pf.foundation': { en: 'Foundation Survey', ja: '財団調査', ar: 'مسح المؤسسة' },
 
     // ---- Stats ----
     'stat.total': { en: 'Total Projects', ja: '総プロジェクト数', ar: 'إجمالي المشاريع' },

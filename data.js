@@ -10,7 +10,8 @@ const DEFAULT_PORTFOLIOS = [
     { id: 'content', name: 'Content & Publishing', icon: '📚', color: '#f59e0b' },
     { id: 'monetization', name: 'Monetization', icon: '💰', color: '#22c55e' },
     { id: 'operations', name: 'Operations & Governance', icon: '🛡️', color: '#3b82f6' },
-    { id: 'people', name: 'People & Org', icon: '👥', color: '#ec4899' }
+    { id: 'people', name: 'People & Org', icon: '👥', color: '#ec4899' },
+    { id: 'foundation', name: 'Foundation Survey', icon: '📊', color: '#8b5cf6' }
 ];
 
 // Available icons for portfolio selection
