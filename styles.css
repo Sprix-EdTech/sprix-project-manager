@@ -660,6 +660,24 @@ select {
     width: 100%;
 }
 
+.search-clear {
+    background: none;
+    border: none;
+    color: var(--text-tertiary);
+    font-size: calc(var(--font-scale, 1) * 16px);
+    cursor: pointer;
+    padding: 0 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color var(--transition-fast);
+    line-height: 1;
+}
+
+.search-clear:hover {
+    color: var(--text-primary);
+}
+
 .search-input::placeholder {
     color: var(--text-tertiary);
 }

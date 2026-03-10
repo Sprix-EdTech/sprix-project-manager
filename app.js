@@ -229,6 +229,16 @@
     function setupSearch() {
         $('searchInput').addEventListener('input', e => {
             searchQuery = e.target.value.toLowerCase();
+            $('searchClear').style.display = searchQuery ? 'flex' : 'none';
+            if (currentView === 'hub') renderHub();
+            else if (currentView === 'table') renderTable();
+            else if (currentView === 'kanban') renderKanban();
+        });
+
+        $('searchClear')?.addEventListener('click', () => {
+            $('searchInput').value = '';
+            searchQuery = '';
+            $('searchClear').style.display = 'none';
             if (currentView === 'hub') renderHub();
             else if (currentView === 'table') renderTable();
             else if (currentView === 'kanban') renderKanban();
