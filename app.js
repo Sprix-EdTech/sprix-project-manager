@@ -642,7 +642,7 @@
         $('modalOverlay').addEventListener('click', e => { if (e.target === $('modalOverlay')) closeModal(); });
         document.addEventListener('keydown', e => { if (e.key === 'Escape') { closeModal(); closeCrudModal(); closePfCrudModal(); } });
         $('modalEditBtn').addEventListener('click', () => { const id = parseInt($('modalTitle').dataset.projectId); closeModal(); window._openCrudModal(id); });
-        $('modalDeleteBtn').addEventListener('click', () => { const id = parseInt($('modalTitle').dataset.projectId); if (confirm(t('crud.confirmDelete'))) { projects = projects.filter(p => p.id !== id); saveProjects(); closeModal(); refreshCurrentView(); showToast(t('toast.deleted')); } });
+        $('modalDeleteBtn').addEventListener('click', () => { const id = parseInt($('modalTitle').dataset.projectId); window._deleteProject(id); });
     }
 
     window._openModal = function (id) {
