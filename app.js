@@ -423,6 +423,24 @@
         if (el.dataset.val === targetStr) return;
         el.dataset.val = targetStr;
 
+        // Try to reuse existing DOM structure to avoid flickering and overlapping animations
+        const existingInners = el.querySelectorAll('.odometer-digit-inner');
+        const numDigits = targetStr.replace(/[^0-9]/g, '').length;
+        if (existingInners.length === numDigits && existingInners.length > 0 && targetStr !== '0') {
+            let digitIndex = 0;
+            for (let i = 0; i < targetStr.length; i++) {
+                const digitStr = targetStr[i];
+                if (!isNaN(parseInt(digitStr))) {
+                    const inner = existingInners[digitIndex++];
+                    const digit = parseInt(digitStr);
+                    const delay = (targetStr.length - i - 1) * 0.1;
+                    inner.style.transition = `transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) ${delay}s`;
+                    inner.style.transform = `translateY(-${digit * 1.1}em)`;
+                }
+            }
+            return;
+        }
+
         let html = '';
         for (let i = 0; i < targetStr.length; i++) {
             const digitStr = targetStr[i];
@@ -556,7 +574,7 @@
         if (sortColumn) ps.sort((a, b) => { let va = a[sortColumn], vb = b[sortColumn]; if (typeof va === 'number') return sortDirection === 'asc' ? va - vb : vb - va; va = (va || '').toString(); vb = (vb || '').toString(); return sortDirection === 'asc' ? va.localeCompare(vb) : vb.localeCompare(va); });
         const cols = [
             { key: 'name', label: t('col.project'), w: '180px' }, { key: 'status', label: t('col.status'), w: '110px' },
-            { key: 'progress', label: t('col.progress'), w: '130px' }, { key: 'approvalflow', label: t('col.approval'), w: '160px' },
+            { key: 'progress', label: t('col.progress'), w: '130px' },
             { key: 'owner', label: t('col.owner'), w: '90px' }, { key: 'currentfocus', label: t('col.currentfocus'), w: '160px' },
             { key: 'blockers', label: t('col.blockers'), w: '160px' }, { key: 'nextmilestone', label: t('col.nextmilestone'), w: '140px' },
             { key: 'targetdate', label: t('col.targetdate'), w: '90px' }, { key: 'actions', label: t('col.actions'), w: '70px' }
@@ -568,7 +586,6 @@
             <td><span class="cell-project-name" onclick="window._openModal(${p.id})">${p.name}</span></td>
             <td><span class="status-badge ${sc}"><span class="status-dot ${sc}"></span>${p.status}</span></td>
             <td><div class="progress-cell"><div class="progress-bar-mini"><div class="progress-bar-fill" style="width:${p.progress}%;background:${progressColor(p.progress)}"></div></div><span class="progress-value">${p.progress}%</span></div></td>
-            <td>${renderApprovalSteps(p.approvalflow)}</td>
             <td>${p.owner}</td>
             <td class="text-truncate" style="max-width:160px" title="${p.currentfocus}">${p.currentfocus}</td>
             <td style="color:${p.blockers ? 'var(--status-off-track)' : 'inherit'};font-weight:${p.blockers ? '600' : '400'}">${p.blockers || '—'}</td>
@@ -580,15 +597,6 @@
     }
 
     window._sortBy = function (col) { if (sortColumn === col) sortDirection = sortDirection === 'asc' ? 'desc' : 'asc'; else { sortColumn = col; sortDirection = 'asc'; } renderTable(); };
-
-    function renderApprovalSteps(current) {
-        const idx = APPROVAL_STEPS.indexOf(current);
-        return '<div class="approval-steps">' + APPROVAL_STEPS.map((s, i) => {
-            const cls = i <= idx ? APPROVAL_CLASSES[i] : 'pending';
-            const line = i < APPROVAL_STEPS.length - 1 ? `<span class="approval-line${i < idx ? ' active' : ''}"></span>` : '';
-            return `<span class="approval-step"><span class="approval-dot ${cls}" title="${s}">${s.charAt(0)}</span>${line}</span>`;
-        }).join('') + '</div>';
-    }
 
     function progressColor(v) { if (v >= 70) return 'var(--status-on-track)'; if (v >= 40) return 'var(--status-at-risk)'; return 'var(--status-off-track)'; }
 
@@ -643,8 +651,6 @@
         $('modalPortfolioBadge').innerHTML = pf ? pf.icon + ' ' + (t('pf.' + pf.id) || pf.name) : '';
         $('modalTitle').textContent = p.name;
         $('modalTitle').dataset.projectId = id;
-        const approvalIdx = APPROVAL_STEPS.indexOf(p.approvalflow);
-        const approvalColors = ['var(--approval-draft)', 'var(--approval-review)', 'var(--approval-approved)', 'var(--approval-submitted)', 'var(--approval-accepted)'];
         $('modalBody').innerHTML = `
         <div class="modal-section"><div class="modal-section-title">${t('modal.overview')}</div><div class="modal-grid">
             <div class="modal-field"><div class="modal-field-label">${t('modal.objective')}</div><div class="modal-field-value">${p.objective}</div></div>
@@ -656,9 +662,6 @@
             <div class="modal-field"><div class="modal-field-label">${t('modal.startdate')}</div><div class="modal-field-value">${formatDate(p.startdate)}</div></div>
             <div class="modal-field"><div class="modal-field-label">${t('modal.targetdate')}</div><div class="modal-field-value">${formatDate(p.targetdate)}</div></div>
         </div></div>
-        <div class="modal-section"><div class="modal-section-title">${t('modal.approvalWorkflow')}</div>
-            <div class="approval-flow-modal">${APPROVAL_STEPS.map((s, i) => { const active = i <= approvalIdx; const conn = i < APPROVAL_STEPS.length - 1 ? `<div class="approval-flow-connector${i < approvalIdx ? ' active' : ''}"></div>` : ''; return `<div class="approval-flow-step"><div class="approval-flow-circle" style="background:${active ? approvalColors[i] : (isDark ? '#334155' : '#e2e8f0')}">${active ? '✓' : (i + 1)}</div><div class="approval-flow-label">${t('approval.' + s.toLowerCase())}</div></div>${conn}`; }).join('')}</div>
-        </div>
         <div class="modal-section"><div class="modal-section-title">${t('modal.currentStatus')}</div><div class="modal-grid">
             <div class="modal-field full-width"><div class="modal-field-label">${t('modal.currentfocus')}</div><div class="modal-field-value">${p.currentfocus}</div></div>
             <div class="modal-field full-width"><div class="modal-field-label">${t('modal.deliverables')}</div><div class="modal-field-value">${p.deliverables}</div></div>
@@ -705,8 +708,7 @@
             <div class="crud-field"><label class="crud-label">${t('col.accountable')}</label><input class="crud-input" id="crudAccountable" value="${p && p.accountable ? p.accountable : ''}"></div>
         </div>
         <div class="crud-row">
-            <div class="crud-field"><label class="crud-label">${t('col.progress')} (%)</label><input class="crud-input" type="number" min="0" max="100" id="crudProgress" value="${p && p.progress ? p.progress : 0}"></div>
-            <div class="crud-field"><label class="crud-label">${t('col.approval')}</label><select class="crud-select" id="crudApproval">${APPROVAL_STEPS.map(s => `<option value="${s}" ${p && p.approvalflow === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
+            <div class="crud-field full-width"><label class="crud-label">${t('col.progress')} (%)</label><input class="crud-input" type="number" min="0" max="100" id="crudProgress" value="${p && p.progress ? p.progress : 0}"></div>
         </div>
         <div class="crud-row">
             <div class="crud-field"><label class="crud-label">${t('modal.startdate')}</label><input class="crud-input" type="date" id="crudStart" value="${p && p.startdate ? p.startdate : ''}"></div>
@@ -725,7 +727,7 @@
         const data = {
             name, portfolio: $('crudPortfolio').value, status: $('crudStatus').value,
             objective: $('crudObjective').value, owner: $('crudOwner').value, accountable: $('crudAccountable').value,
-            progress: parseInt($('crudProgress').value) || 0, approvalflow: $('crudApproval').value,
+            progress: parseInt($('crudProgress').value) || 0,
             currentfocus: $('crudFocus').value, blockers: $('crudBlockers').value,
             nextmilestone: $('crudMilestone').value, lastupdated: new Date().toISOString().slice(0, 10)
         };
@@ -910,8 +912,8 @@
     }
 
     function exportCSV() {
-        const headers = ['Portfolio', 'Name', 'Status', 'Progress', 'Owner', 'Accountable', 'Stakeholders', 'Objective', 'CurrentFocus', 'Blockers', 'Risks', 'NextMilestone', 'TargetDate', 'ApprovalFlow', 'LastUpdated'];
-        const rows = projects.map(p => [PORTFOLIOS.find(x => x.id === p.portfolio)?.name || '', p.name, p.status, p.progress, p.owner, p.accountable, (p.stakeholders || []).join(';'), p.objective, p.currentfocus, p.blockers, p.risks, p.nextmilestone, p.targetdate, p.approvalflow, p.lastupdated].map(v => `"${(v || '').toString().replace(/"/g, '""')}"`));
+        const headers = ['Portfolio', 'Name', 'Status', 'Progress', 'Owner', 'Accountable', 'Stakeholders', 'Objective', 'CurrentFocus', 'Blockers', 'Risks', 'NextMilestone', 'TargetDate', 'LastUpdated'];
+        const rows = projects.map(p => [PORTFOLIOS.find(x => x.id === p.portfolio)?.name || '', p.name, p.status, p.progress, p.owner, p.accountable, (p.stakeholders || []).join(';'), p.objective, p.currentfocus, p.blockers, p.risks, p.nextmilestone, p.targetdate, p.lastupdated].map(v => `"${(v || '').toString().replace(/"/g, '""')}"`));
         const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
         download('sprix-projects.csv', csv, 'text/csv');
         showToast(t('toast.csvDone'));

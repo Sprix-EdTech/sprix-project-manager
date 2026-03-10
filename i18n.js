@@ -56,7 +56,7 @@ const TRANSLATIONS = {
     'col.currentFocus': { en: 'Current Focus', ja: '現在のフォーカス', ar: 'التركيز الحالي' },
     'col.blockers': { en: 'Blockers', ja: 'ブロッカー', ar: 'العوائق' },
     'col.nextMilestone': { en: 'Next Milestone', ja: '次のマイルストーン', ar: 'المعلم التالي' },
-    'col.targetDate': { en: 'Target Date', ja: '目標日', ar: 'الموعد المستهدف' },
+    'col.targetdate': { en: 'Target Date', ja: '目標時期', ar: 'موعد الإنجاز' },
     'col.updated': { en: 'Updated', ja: '更新日', ar: 'آخر تحديث' },
     'col.actions': { en: 'Actions', ja: '操作', ar: 'الإجراءات' },
 
@@ -88,7 +88,6 @@ const TRANSLATIONS = {
     // ---- Modal ----
     'modal.overview': { en: 'Overview', ja: '概要', ar: 'نظرة عامة' },
     'modal.objective': { en: 'Objective', ja: '目的', ar: 'الهدف' },
-    'modal.approvalWorkflow': { en: 'Approval Workflow', ja: '承認ワークフロー', ar: 'سير الموافقة' },
     'modal.currentStatus': { en: 'Current Status', ja: '現在の状況', ar: 'الحالة الحالية' },
     'modal.currentFocus': { en: 'Current Focus', ja: '現在のフォーカス', ar: 'التركيز الحالي' },
     'modal.deliverables': { en: 'Key Deliverables', ja: '主要成果物', ar: 'المخرجات الرئيسية' },
@@ -156,13 +155,6 @@ const TRANSLATIONS = {
     'toast.backupDone': { en: 'Backup saved ✓', ja: 'バックアップ保存完了 ✓', ar: 'تم حفظ النسخة ✓' },
     'toast.restored': { en: 'Data restored ✓', ja: 'データ復元完了 ✓', ar: 'تمت استعادة البيانات ✓' },
     'toast.nameRequired': { en: 'Project name is required', ja: 'プロジェクト名は必須です', ar: 'اسم المشروع مطلوب' },
-
-    // ---- Approval Steps ----
-    'approval.draft': { en: 'Draft', ja: 'ドラフト', ar: 'مسودة' },
-    'approval.review': { en: 'Review', ja: 'レビュー', ar: 'مراجعة' },
-    'approval.approved': { en: 'Approved', ja: '承認済', ar: 'موافق عليه' },
-    'approval.submitted': { en: 'Submitted', ja: '提出済', ar: 'مُقدَّم' },
-    'approval.accepted': { en: 'Accepted', ja: '受理済', ar: 'مقبول' },
 };
 
 let currentLang = 'en';
