@@ -396,12 +396,7 @@
         const of2 = all.filter(p => p.status === 'Off Track').length;
         const dn = all.filter(p => p.status === 'Done').length;
 
-        $('statTotalVal').textContent = '0';
-        $('statOnTrackVal').textContent = '0';
-        $('statAtRiskVal').textContent = '0';
-        $('statOffTrackVal').textContent = '0';
-        $('statDoneVal').textContent = '0';
-
+        // Re-animate the values without destroying the DOM structure by resetting to '0'
         observeAndAnimate('statsBar', () => {
             animateCount($('statTotalVal'), tot);
             animateCount($('statOnTrackVal'), ot);
