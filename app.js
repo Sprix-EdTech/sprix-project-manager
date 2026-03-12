@@ -484,6 +484,11 @@
         const container = $('portfolioCards');
         const existingCards = container.querySelectorAll('.portfolio-card');
 
+        function getStatusKey(s) {
+            const k = s.replace(' ', '');
+            return 'status.' + k.charAt(0).toLowerCase() + k.slice(1);
+        }
+
         // If cards already exist, just update their contents to prevent jitter and maintain animations
         if (existingCards.length === PORTFOLIOS.length) {
             PORTFOLIOS.forEach((pf, i) => {
@@ -492,6 +497,8 @@
                 const avg = ps.length ? Math.round(ps.reduce((s, p) => s + p.progress, 0) / ps.length) : 0;
                 const sc = {}; STATUS_LIST.forEach(s => sc[s] = 0); ps.forEach(p => sc[p.status]++);
 
+                card.querySelector('.pcard-title').textContent = t('pf.' + pf.id) || pf.name;
+                card.querySelector('.pcard-progress-label').textContent = t('hub.avgProgress');
                 card.querySelector('.pcard-count').textContent = `${ps.length} ${t('hub.projects')}`;
                 card.querySelector('.pcard-progress-value').textContent = `${avg}%`;
                 
@@ -500,7 +507,7 @@
                 fill.style.width = avg + '%';
                 
                 card.querySelector('.pcard-status-bar').innerHTML = STATUS_LIST.map(s => `<div class="pcard-status-segment" style="flex:${sc[s]};background:${STATUS_COLORS[s]}"></div>`).join('');
-                card.querySelector('.pcard-stats').innerHTML = STATUS_LIST.filter(s => sc[s] > 0).map(s => `<div class="pcard-stat"><span class="pcard-stat-dot" style="background:${STATUS_COLORS[s]}"></span>${sc[s]} ${s}</div>`).join('');
+                card.querySelector('.pcard-stats').innerHTML = STATUS_LIST.filter(s => sc[s] > 0).map(s => `<div class="pcard-stat"><span class="pcard-stat-dot" style="background:${STATUS_COLORS[s]}"></span>${sc[s]} ${t(getStatusKey(s))}</div>`).join('');
             });
             return; // Skip full re-render
         }
@@ -514,7 +521,7 @@
             <div class="pcard-title">${t('pf.' + pf.id) || pf.name}</div>
             <div class="pcard-progress"><div class="pcard-progress-header"><span class="pcard-progress-label">${t('hub.avgProgress')}</span><span class="pcard-progress-value">${avg}%</span></div><div class="pcard-progress-bar"><div class="pcard-progress-fill" style="width:0%" data-target="${avg}"></div></div></div>
             <div class="pcard-status-bar">${STATUS_LIST.map(s => `<div class="pcard-status-segment" style="flex:${sc[s]};background:${STATUS_COLORS[s]}"></div>`).join('')}</div>
-            <div class="pcard-stats">${STATUS_LIST.filter(s => sc[s] > 0).map(s => `<div class="pcard-stat"><span class="pcard-stat-dot" style="background:${STATUS_COLORS[s]}"></span>${sc[s]} ${s}</div>`).join('')}</div>
+            <div class="pcard-stats">${STATUS_LIST.filter(s => sc[s] > 0).map(s => `<div class="pcard-stat"><span class="pcard-stat-dot" style="background:${STATUS_COLORS[s]}"></span>${sc[s]} ${t(getStatusKey(s))}</div>`).join('')}</div>
         </div>`;
         }).join('');
 
@@ -567,8 +574,27 @@
             const sweep = ease * 2 * Math.PI;
             counts.forEach((c, i) => { if (c === 0) return; const angle = (c / total) * sweep; ctx.beginPath(); ctx.arc(cx, cy, r, start, start + angle); ctx.arc(cx, cy, ir, start + angle, start, true); ctx.closePath(); ctx.fillStyle = colors[i]; ctx.fill(); start += angle; });
             ctx.fillStyle = isDark ? '#f1f5f9' : '#0f172a'; ctx.font = '700 28px Inter'; ctx.textAlign = 'center'; ctx.fillText(Math.round(total * ease), cx, cy + 2);
-            ctx.font = '500 10px Inter'; ctx.fillStyle = '#94a3b8'; ctx.fillText('PROJECTS', cx, cy + 16);
-            if (p >= 1) { let ly = 270, lx = 20; ctx.font = '500 10px Inter'; STATUS_LIST.forEach((s, i) => { if (counts[i] === 0) return; ctx.fillStyle = colors[i]; ctx.beginPath(); ctx.arc(lx, ly, 4, 0, 2 * Math.PI); ctx.fill(); ctx.fillStyle = isDark ? '#94a3b8' : '#475569'; ctx.textAlign = 'left'; ctx.fillText(`${s} (${counts[i]})`, lx + 8, ly + 3); lx += ctx.measureText(`${s} (${counts[i]})`).width + 20; }); }
+            ctx.font = '500 10px Inter'; ctx.fillStyle = '#94a3b8'; ctx.fillText(t('stat.total') || 'PROJECTS', cx, cy + 16);
+            if (p >= 1) { 
+                let ly = 270, lx = 20; 
+                ctx.font = '500 10px Inter'; 
+                STATUS_LIST.forEach((s, i) => { 
+                    if (counts[i] === 0) return; 
+                    const k = s.replace(' ', '');
+                    const tKey = 'status.' + k.charAt(0).toLowerCase() + k.slice(1);
+                    const text = `${t(tKey)} (${counts[i]})`;
+                    const textWidth = ctx.measureText(text).width;
+                    if (lx + textWidth + 16 > 290) { lx = 20; ly += 16; }
+                    ctx.fillStyle = colors[i]; 
+                    ctx.beginPath(); 
+                    ctx.arc(lx, ly, 4, 0, 2 * Math.PI); 
+                    ctx.fill(); 
+                    ctx.fillStyle = isDark ? '#94a3b8' : '#475569'; 
+                    ctx.textAlign = 'left'; 
+                    ctx.fillText(text, lx + 8, ly + 3); 
+                    lx += textWidth + 20; 
+                }); 
+            }
             if (p < 1) requestAnimationFrame(draw);
         }
         requestAnimationFrame(draw);
