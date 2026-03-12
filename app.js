@@ -610,8 +610,9 @@
         canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
         ctx.scale(dpr, dpr);
         const allFiltered = getFilteredProjects();
-        const data = PORTFOLIOS.map(pf => { const ps = allFiltered.filter(p => p.portfolio === pf.id); return { name: (t('pf.' + pf.id) || pf.name).slice(0, 12), avg: ps.length ? Math.round(ps.reduce((s, p) => s + p.progress, 0) / ps.length) : 0, color: pf.color }; });
-        const margin = { top: 20, right: 20, bottom: 50, left: 40 };
+        // Removed .slice(0, 12) so full names are rendered
+        const data = PORTFOLIOS.map(pf => { const ps = allFiltered.filter(p => p.portfolio === pf.id); return { name: (t('pf.' + pf.id) || pf.name), avg: ps.length ? Math.round(ps.reduce((s, p) => s + p.progress, 0) / ps.length) : 0, color: pf.color }; });
+        const margin = { top: 20, right: 20, bottom: 70, left: 40 }; // Increased bottom margin
         const chartW = w - margin.left - margin.right, chartH = h - margin.top - margin.bottom;
         const gap = chartW / data.length, barW = gap * 0.6;
         const dur = 800; let startT = null;
@@ -622,7 +623,34 @@
             ctx.clearRect(0, 0, w, h);
             ctx.strokeStyle = isDark ? '#1e293b' : '#e2e8f0'; ctx.lineWidth = 1;
             for (let i = 0; i <= 4; i++) { const y = margin.top + chartH - (chartH * i / 4); ctx.beginPath(); ctx.moveTo(margin.left, y); ctx.lineTo(w - margin.right, y); ctx.stroke(); ctx.fillStyle = isDark ? '#64748b' : '#94a3b8'; ctx.font = '500 10px Inter'; ctx.textAlign = 'right'; ctx.fillText((i * 25) + '%', margin.left - 6, y + 3); }
-            data.forEach((d, i) => { const x = margin.left + i * gap + (gap - barW) / 2; const barH = (d.avg / 100) * chartH * ease; const y = margin.top + chartH - barH; const grad = ctx.createLinearGradient(x, y, x, margin.top + chartH); grad.addColorStop(0, d.color); grad.addColorStop(1, d.color + '60'); ctx.fillStyle = grad; ctx.beginPath(); ctx.roundRect(x, y, barW, Math.max(barH, 0), [4, 4, 0, 0]); ctx.fill(); if (p > 0.5) { ctx.fillStyle = isDark ? '#f1f5f9' : '#0f172a'; ctx.font = '700 10px Inter'; ctx.textAlign = 'center'; ctx.globalAlpha = (p - 0.5) * 2; ctx.fillText(d.avg + '%', x + barW / 2, y - 5); ctx.globalAlpha = 1; } ctx.fillStyle = isDark ? '#94a3b8' : '#475569'; ctx.font = '500 9px Inter'; ctx.save(); ctx.translate(x + barW / 2, margin.top + chartH + 12); ctx.rotate(-0.3); ctx.fillText(d.name, 0, 0); ctx.restore(); });
+            data.forEach((d, i) => { 
+                const x = margin.left + i * gap + (gap - barW) / 2; 
+                const barH = (d.avg / 100) * chartH * ease; 
+                const y = Math.max(margin.top + chartH - barH, margin.top); 
+                const grad = ctx.createLinearGradient(x, y, x, margin.top + chartH); 
+                grad.addColorStop(0, d.color); 
+                grad.addColorStop(1, d.color + '60'); 
+                ctx.fillStyle = grad; 
+                ctx.beginPath(); 
+                ctx.roundRect(x, y, barW, Math.max(margin.top + chartH - y, 0), [4, 4, 0, 0]); 
+                ctx.fill(); 
+                if (p > 0.5) { 
+                    ctx.fillStyle = isDark ? '#f1f5f9' : '#0f172a'; 
+                    ctx.font = '700 10px Inter'; 
+                    ctx.textAlign = 'center'; 
+                    ctx.globalAlpha = (p - 0.5) * 2; 
+                    ctx.fillText(d.avg + '%', x + barW / 2, y - 5); 
+                    ctx.globalAlpha = 1; 
+                } 
+                ctx.fillStyle = isDark ? '#94a3b8' : '#475569'; 
+                ctx.font = '500 9px Inter'; 
+                ctx.save(); 
+                ctx.translate(x + barW / 2 + (currentLang === 'ar' ? -5 : 5), margin.top + chartH + 12); 
+                ctx.rotate(currentLang === 'ar' ? 0.6 : -0.6); // Increased rotation angle
+                ctx.textAlign = currentLang === 'ar' ? 'left' : 'right'; // Right align to pivot at the bar center
+                ctx.fillText(d.name, 0, 0); 
+                ctx.restore(); 
+            });
             if (p < 1) requestAnimationFrame(draw);
         }
         requestAnimationFrame(draw);
