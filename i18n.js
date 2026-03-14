@@ -54,10 +54,11 @@ const TRANSLATIONS = {
     'col.owner': { en: 'Owner', ja: '責任者', ar: 'المسؤول' },
     'col.accountable': { en: 'Accountable', ja: '最終責任', ar: 'المساءل' },
     'col.stakeholders': { en: 'Stakeholders', ja: 'ステークホルダー', ar: 'أصحاب المصلحة' },
-    'col.currentFocus': { en: 'Current Focus', ja: '現在のフォーカス', ar: 'التركيز الحالي' },
+    'col.currentfocus': { en: 'Current Focus', ja: '現在の課題', ar: 'التركيز الحالي' },
     'col.blockers': { en: 'Blockers', ja: 'ブロッカー', ar: 'العوائق' },
-    'col.nextMilestone': { en: 'Next Milestone', ja: '次のマイルストーン', ar: 'المعلم التالي' },
+    'col.nextmilestone': { en: 'Next Milestone', ja: '次のマイルストーン', ar: 'المعلم التالي' },
     'col.targetdate': { en: 'Target Date', ja: '目標時期', ar: 'موعد الإنجاز' },
+    'col.lastupdated': { en: 'Last Updated', ja: '更新日時', ar: 'آخر تحديث' },
     'col.updated': { en: 'Updated', ja: '更新日', ar: 'آخر تحديث' },
     'col.actions': { en: 'Actions', ja: '操作', ar: 'الإجراءات' },
 

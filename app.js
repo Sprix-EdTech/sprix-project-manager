@@ -666,7 +666,8 @@
             { key: 'progress', label: t('col.progress'), w: '130px' },
             { key: 'owner', label: t('col.owner'), w: '90px' }, { key: 'currentfocus', label: t('col.currentfocus'), w: '160px' },
             { key: 'blockers', label: t('col.blockers'), w: '160px' }, { key: 'nextmilestone', label: t('col.nextmilestone'), w: '140px' },
-            { key: 'targetdate', label: t('col.targetdate'), w: '90px' }, { key: 'actions', label: t('col.actions'), w: '70px' }
+            { key: 'targetdate', label: t('col.targetdate'), w: '90px' }, { key: 'lastupdated', label: t('col.lastupdated'), w: '90px' },
+            { key: 'actions', label: t('col.actions'), w: '70px' }
         ];
         $('projectTableHead').innerHTML = '<tr>' + cols.map(c => `<th style="min-width:${c.w}" data-col="${c.key}" onclick="${c.key !== 'actions' ? `window._sortBy('${c.key}')` : ''}" class="${sortColumn === c.key ? 'sort-' + sortDirection : ''}">${c.label}</th>`).join('') + '</tr>';
         $('projectTableBody').innerHTML = ps.map(p => {
@@ -680,6 +681,7 @@
             <td style="color:${p.blockers ? 'var(--status-off-track)' : 'inherit'};font-weight:${p.blockers ? '600' : '400'}">${p.blockers || '—'}</td>
             <td>${p.nextmilestone}</td>
             <td>${formatDate(p.targetdate)}</td>
+            <td>${formatDate(p.lastupdated)}</td>
             <td><div class="row-actions"><button class="row-action-btn" onclick="event.stopPropagation();window._openCrudModal(${p.id})" title="Edit">✏️</button><button class="row-action-btn" onclick="event.stopPropagation();window._deleteProject(${p.id})" title="Delete">🗑️</button></div></td>
         </tr>`;
         }).join('');
@@ -1001,7 +1003,13 @@
     }
 
     function exportCSV() {
-        const headers = ['Portfolio', 'Name', 'Status', 'Progress', 'Owner', 'Accountable', 'Stakeholders', 'Objective', 'CurrentFocus', 'Blockers', 'Risks', 'NextMilestone', 'TargetDate', 'LastUpdated'];
+        const headers = [
+            t('col.portfolio') || 'Portfolio', t('col.project') || 'Name', t('col.status') || 'Status', t('col.progress') || 'Progress', 
+            t('col.owner') || 'Owner', t('col.accountable') || 'Accountable', t('col.stakeholders') || 'Stakeholders', 
+            t('col.objective') || 'Objective', t('col.currentfocus') || 'Current Focus', t('col.blockers') || 'Blockers', 
+            t('col.risks') || 'Risks', t('col.nextmilestone') || 'Next Milestone', t('col.targetdate') || 'Target Date', 
+            t('col.lastupdated') || 'Last Updated'
+        ];
         const rows = projects.map(p => [PORTFOLIOS.find(x => x.id === p.portfolio)?.name || '', p.name, p.status, p.progress, p.owner, p.accountable, (p.stakeholders || []).join(';'), p.objective, p.currentfocus, p.blockers, p.risks, p.nextmilestone, p.targetdate, p.lastupdated].map(v => `"${(v || '').toString().replace(/"/g, '""')}"`));
         const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
         download('sprix-projects.csv', csv, 'text/csv');
