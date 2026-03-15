@@ -1643,6 +1643,29 @@ select {
     border-color: var(--primary-300);
 }
 
+.kanban-card.dragging {
+    opacity: 0.5;
+    transform: scale(0.98);
+    box-shadow: var(--shadow-xl);
+    border-color: var(--primary-500);
+}
+
+.kanban-column.drag-over {
+    background: var(--bg-surface-hover);
+    border: 2px dashed var(--primary-400);
+}
+
+.drag-handle {
+    cursor: grab;
+    color: var(--text-tertiary);
+    margin-right: 4px;
+    font-size: 14px;
+    user-select: none;
+}
+.drag-handle:active {
+    cursor: grabbing;
+}
+
 .kanban-card-portfolio {
     font-size: calc(var(--font-scale, 1) * 9px);
     font-weight: 600;

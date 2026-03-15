@@ -163,6 +163,8 @@ const TRANSLATIONS = {
     'tut.step1.text': { en: 'View all your projects and block status at a glance. Click on each card to jump to details.', ja: '全プロジェクトの進捗とブロック状態を俯瞰できます。各カードをクリックすると詳細にジャンプします。', ar: 'عرض جميع مشاريعك وحالة الحظر في لمحة. انقر على كل بطاقة للانتقال إلى التفاصيل.' },
     'tut.step2.title': { en: 'Switching Views', ja: '表示の切り替え', ar: 'تبديل العروض' },
     'tut.step2.text': { en: 'Switch between Table, Kanban, and Timeline views to visualize your data differently.', ja: 'テーブル、カンバン、タイムラインの3つの視点をワンクリックで切り替え可能です。', ar: 'قم بالتبديل بين عروض الجدول وكانبان والجدول الزمني لتصور بياناتك بشكل مختلف.' },
+    'tut.step2b.title': { en: 'Kanban Drag & Drop', ja: 'カンバンドラッグ＆ドロップ', ar: 'السحب والإفلات في كانبان' },
+    'tut.step2b.text': { en: 'In the Kanban view, you can easily drag and drop project cards to instantly change their status.', ja: 'カンバン表示では、プロジェクトのカードをドラッグ＆ドロップするだけで、直感的にステータスを変更できます。', ar: 'في عرض كانبان، يمكنك بسهولة سحب وإسقاط بطاقات المشاريع لتغيير حالتها على الفور.' },
     'tut.step3.title': { en: 'Advanced Search & Filtering', ja: '高度な検索と絞り込み', ar: 'البحث المتقدم والتصفية' },
     'tut.step3.text': { en: 'Quickly find what you need by typing in the search box, or filter by Status, Owner, or Blockers. Click the "X" in the search box to clear it instantly.', ja: 'サーチウィンドウ、ステータス、責任者、ブロッカーなど、さまざまな検索・絞り込みが可能です。検索窓の「✕」で一瞬でクリアできます。', ar: 'اعثر بسرعة على ما تحتاجه عن طريق الكتابة في مربع البحث ، أو قم بالتصفية حسب الحالة أو المالك أو أدوات الحظر. انقر فوق "X" في مربع البحث لمسحه على الفور.' },
     'tut.step4.title': { en: 'Creating Projects', ja: 'プロジェクト追加', ar: 'إنشاء مشاريع' },

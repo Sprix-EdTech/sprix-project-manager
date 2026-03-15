@@ -695,12 +695,89 @@
     function renderKanban() {
         const ps = getFilteredProjects();
         $('kanbanBoard').innerHTML = STATUS_LIST.map(status => {
-            const sc = STATUS_CLASSES[status]; const items = ps.filter(p => p.status === status);
-            return `<div class="kanban-column" data-status="${sc}"><div class="kanban-column-header"><span class="kanban-column-title"><span class="status-dot ${sc}"></span>${status}</span><span class="kanban-column-count">${items.length}</span></div>
-            ${items.map(p => { const pf = PORTFOLIOS.find(x => x.id === p.portfolio); return `<div class="kanban-card" onclick="window._openModal(${p.id})"><div class="kanban-card-portfolio">${pf ? pf.icon + ' ' + (t('pf.' + pf.id) || pf.name) : ''}</div><div class="kanban-card-title">${p.name}</div><div class="kanban-card-footer"><span class="kanban-card-owner">${p.owner}</span><span class="kanban-card-progress" style="color:${progressColor(p.progress)}">${p.progress}%</span></div>${p.nextmilestone ? `<div class="kanban-card-milestone">🏁 ${p.nextmilestone}</div>` : ''}</div>`; }).join('')}
-        </div>`;
+            const sc = STATUS_CLASSES[status]; 
+            const items = ps.filter(p => p.status === status);
+            const k = status.replace(' ', '');
+            const tKey = 'status.' + k.charAt(0).toLowerCase() + k.slice(1);
+            
+            return `<div class="kanban-column" data-status="${sc}" ondragover="window._handleDragOver(event)" ondragleave="window._handleDragLeave(event)" ondrop="window._handleDrop(event, '${status}')">
+                <div class="kanban-column-header">
+                    <span class="kanban-column-title"><span class="status-dot ${sc}"></span>${t(tKey) || status}</span>
+                    <span class="kanban-column-count">${items.length}</span>
+                </div>
+                ${items.map(p => { 
+                    const pf = PORTFOLIOS.find(x => x.id === p.portfolio); 
+                    return `<div class="kanban-card" draggable="true" ondragstart="window._handleDragStart(event, ${p.id})" ondragend="window._handleDragEnd(event)" onclick="window._openModal(${p.id})">
+                        <div class="kanban-card-portfolio"><span class="drag-handle" title="Drag to move status">⣿</span> ${pf ? pf.icon + ' ' + (t('pf.' + pf.id) || pf.name) : ''}</div>
+                        <div class="kanban-card-title">${p.name}</div>
+                        <div class="kanban-card-footer">
+                            <span class="kanban-card-owner">${p.owner}</span>
+                            <span class="kanban-card-progress" style="color:${progressColor(p.progress)}">${p.progress}%</span>
+                        </div>
+                        ${p.nextmilestone ? `<div class="kanban-card-milestone">🏁 ${p.nextmilestone}</div>` : ''}
+                    </div>`; 
+                }).join('')}
+            </div>`;
         }).join('');
     }
+
+    // --- Drag and Drop Handlers ---
+    window._handleDragStart = function(e, id) {
+        e.dataTransfer.setData('text/plain', id);
+        e.dataTransfer.effectAllowed = 'move';
+        setTimeout(() => e.target.classList.add('dragging'), 0);
+    };
+    
+    window._handleDragEnd = function(e) {
+        e.target.classList.remove('dragging');
+        document.querySelectorAll('.kanban-column').forEach(c => c.classList.remove('drag-over'));
+    };
+    
+    window._handleDragOver = function(e) {
+        e.preventDefault();
+        e.dataTransfer.dropEffect = 'move';
+        const col = e.target.closest('.kanban-column');
+        if (col) col.classList.add('drag-over');
+    };
+    
+    window._handleDragLeave = function(e) {
+        const col = e.target.closest('.kanban-column');
+        if (col) col.classList.remove('drag-over');
+    };
+    
+    window._handleDrop = async function(e, newStatus) {
+        e.preventDefault();
+        const col = e.target.closest('.kanban-column');
+        if (col) col.classList.remove('drag-over');
+        
+        const idStr = e.dataTransfer.getData('text/plain');
+        if (!idStr) return;
+        const id = parseInt(idStr);
+        
+        const p = projects.find(x => x.id === id);
+        if (!p || p.status === newStatus) return;
+        
+        p.status = newStatus;
+        if (newStatus === 'Done') p.progress = 100;
+        p.lastupdated = new Date().toISOString();
+        
+        // Optimistic UI update
+        refreshCurrentView();
+        
+        // Background sync
+        const { error } = await supabase.from('projects').update({ 
+            status: newStatus, 
+            progress: p.progress, 
+            lastupdated: p.lastupdated 
+        }).eq('id', id);
+        
+        if (error) {
+            showToast('Failed to update status in database');
+            console.error(error);
+        } else if (newStatus === 'Done') {
+            triggerConfetti();
+        }
+    };
 
     // ========== TIMELINE ==========
     function renderTimeline() {
@@ -1037,6 +1114,7 @@
         tutorialSteps = [
             { title: t('tut.step1.title'), text: t('tut.step1.text') },
             { title: t('tut.step2.title'), text: t('tut.step2.text') },
+            { title: t('tut.step2b.title'), text: t('tut.step2b.text') },
             { title: t('tut.step3.title'), text: t('tut.step3.text') },
             { title: t('tut.step4.title'), text: t('tut.step4.text') },
             { title: t('tut.step5.title'), text: t('tut.step5.text') },
