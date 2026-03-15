@@ -879,12 +879,12 @@
             <div class="crud-field full-width"><label class="crud-label">${t('col.progress')} (%)</label><input class="crud-input" type="number" min="0" max="100" id="crudProgress" value="${p && p.progress ? p.progress : 0}"></div>
         </div>
         <div class="crud-row">
-            <div class="crud-field"><label class="crud-label">${t('modal.startdate')}</label><input class="crud-input" type="date" id="crudStart" value="${p && p.startdate ? p.startdate : ''}"></div>
-            <div class="crud-field"><label class="crud-label">${t('modal.targetdate')}</label><input class="crud-input" type="date" id="crudTarget" value="${p && p.targetdate ? p.targetdate : ''}"></div>
+            <div class="crud-field"><label class="crud-label">${t('modal.startDate')}</label><input class="crud-input" type="date" id="crudStart" value="${p && p.startdate ? p.startdate : ''}"></div>
+            <div class="crud-field"><label class="crud-label">${t('modal.targetDate')}</label><input class="crud-input" type="date" id="crudTarget" value="${p && p.targetdate ? p.targetdate : ''}"></div>
         </div>
-        <div class="crud-field"><label class="crud-label">${t('modal.currentfocus')}</label><input class="crud-input" id="crudFocus" value="${p && p.currentfocus ? p.currentfocus : ''}"></div>
+        <div class="crud-field"><label class="crud-label">${t('modal.currentFocus')}</label><input class="crud-input" id="crudFocus" value="${p && p.currentfocus ? p.currentfocus : ''}"></div>
         <div class="crud-field"><label class="crud-label">${t('col.blockers')}</label><input class="crud-input" id="crudBlockers" value="${p && p.blockers ? p.blockers : ''}"></div>
-        <div class="crud-field"><label class="crud-label">${t('modal.nextmilestone')}</label><input class="crud-input" id="crudMilestone" value="${p && p.nextmilestone ? p.nextmilestone : ''}"></div>
+        <div class="crud-field"><label class="crud-label">${t('modal.nextMilestone')}</label><input class="crud-input" id="crudMilestone" value="${p && p.nextmilestone ? p.nextmilestone : ''}"></div>
     </div>`;
         $('crudOverlay').style.display = 'flex';
     };
