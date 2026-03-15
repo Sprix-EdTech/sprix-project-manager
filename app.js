@@ -758,7 +758,14 @@
         if (!p || p.status === newStatus) return;
         
         p.status = newStatus;
-        if (newStatus === 'Done') p.progress = 100;
+        if (newStatus === 'Done') {
+            p.progress = 100;
+        } else if (newStatus === 'Not Started') {
+            p.progress = 0;
+        } else if (p.progress >= 100) {
+            p.progress = 90;
+        }
+        
         p.lastupdated = new Date().toISOString();
         
         // Optimistic UI update
