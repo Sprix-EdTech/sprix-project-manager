@@ -750,14 +750,14 @@
             <div class="modal-field"><div class="modal-field-label">${t('col.accountable')}</div><div class="modal-field-value">${p.accountable}</div></div>
             <div class="modal-field"><div class="modal-field-label">${t('col.stakeholders')}</div><div class="modal-field-value">${(p.stakeholders || []).join(', ')}</div></div>
             <div class="modal-field"><div class="modal-field-label">${t('col.progress')}</div><div class="modal-field-value"><div class="progress-cell"><div class="progress-bar-mini"><div class="progress-bar-fill" style="width:${p.progress}%;background:${progressColor(p.progress)}"></div></div><span class="progress-value">${p.progress}%</span></div></div></div>
-            <div class="modal-field"><div class="modal-field-label">${t('modal.startdate')}</div><div class="modal-field-value">${formatDate(p.startdate)}</div></div>
-            <div class="modal-field"><div class="modal-field-label">${t('modal.targetdate')}</div><div class="modal-field-value">${formatDate(p.targetdate)}</div></div>
+            <div class="modal-field"><div class="modal-field-label">${t('modal.startDate')}</div><div class="modal-field-value">${formatDate(p.startdate)}</div></div>
+            <div class="modal-field"><div class="modal-field-label">${t('modal.targetDate')}</div><div class="modal-field-value">${formatDate(p.targetdate)}</div></div>
         </div></div>
         <div class="modal-section"><div class="modal-section-title">${t('modal.currentStatus')}</div><div class="modal-grid">
-            <div class="modal-field full-width"><div class="modal-field-label">${t('modal.currentfocus')}</div><div class="modal-field-value">${p.currentfocus}</div></div>
+            <div class="modal-field full-width"><div class="modal-field-label">${t('modal.currentFocus')}</div><div class="modal-field-value">${p.currentfocus}</div></div>
             <div class="modal-field full-width"><div class="modal-field-label">${t('modal.deliverables')}</div><div class="modal-field-value">${p.deliverables}</div></div>
-            <div class="modal-field"><div class="modal-field-label">${t('modal.nextmilestone')}</div><div class="modal-field-value">${p.nextmilestone}</div></div>
-            <div class="modal-field"><div class="modal-field-label">${t('modal.lastupdated')}</div><div class="modal-field-value">${formatDate(p.lastupdated)}</div></div>
+            <div class="modal-field"><div class="modal-field-label">${t('modal.nextMilestone')}</div><div class="modal-field-value">${p.nextmilestone}</div></div>
+            <div class="modal-field"><div class="modal-field-label">${t('modal.lastUpdated')}</div><div class="modal-field-value">${formatDate(p.lastupdated)}</div></div>
             ${p.blockers ? `<div class="modal-field full-width" style="border-left:3px solid var(--status-off-track)"><div class="modal-field-label">${t('modal.blockers')}</div><div class="modal-field-value" style="color:var(--status-off-track)">${p.blockers}</div></div>` : ''}
             ${p.risks ? `<div class="modal-field full-width"><div class="modal-field-label">${t('modal.risks')}</div><div class="modal-field-value">${p.risks}</div></div>` : ''}
         </div></div>`;
