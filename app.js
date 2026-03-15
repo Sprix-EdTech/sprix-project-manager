@@ -103,6 +103,25 @@
         updateBadges();
         updateBlockerCount();
         renderSidebarPortfolios();
+
+        // Update Page Title based on current view/portfolio (Translation fix)
+        if (currentView === 'hub') {
+            $('pageTitle').textContent = t('nav.hub');
+        } else if (currentView === 'table') {
+            if (currentPortfolio) {
+                const pf = PORTFOLIOS.find(p => p.id === currentPortfolio);
+                $('pageTitle').textContent = pf ? (t('pf.' + pf.id) || pf.name) : t('nav.allTable');
+            } else {
+                $('pageTitle').textContent = t('nav.allTable');
+            }
+        } else if (currentView === 'kanban') {
+            $('pageTitle').textContent = t('nav.kanban');
+        } else if (currentView === 'timeline') {
+            $('pageTitle').textContent = t('nav.timeline');
+        } else if (currentView === 'settings') {
+            $('pageTitle').textContent = t('settings.title');
+        }
+
         if (currentView === 'hub') renderHub();
         else if (currentView === 'table') renderTable();
         else if (currentView === 'kanban') renderKanban();
