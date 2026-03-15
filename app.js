@@ -839,7 +839,6 @@
         </div></div>
         <div class="modal-section"><div class="modal-section-title">${t('modal.currentStatus')}</div><div class="modal-grid">
             <div class="modal-field full-width"><div class="modal-field-label">${t('modal.currentFocus')}</div><div class="modal-field-value">${p.currentfocus}</div></div>
-            <div class="modal-field full-width"><div class="modal-field-label">${t('modal.deliverables')}</div><div class="modal-field-value">${p.deliverables}</div></div>
             <div class="modal-field"><div class="modal-field-label">${t('modal.nextMilestone')}</div><div class="modal-field-value">${p.nextmilestone}</div></div>
             <div class="modal-field"><div class="modal-field-label">${t('modal.lastUpdated')}</div><div class="modal-field-value">${formatDate(p.lastupdated)}</div></div>
             ${p.blockers ? `<div class="modal-field full-width" style="border-left:3px solid var(--status-off-track)"><div class="modal-field-label">${t('modal.blockers')}</div><div class="modal-field-value" style="color:var(--status-off-track)">${p.blockers}</div></div>` : ''}
@@ -890,7 +889,6 @@
             <div class="crud-field"><label class="crud-label">${t('modal.targetDate')}</label><input class="crud-input" type="date" id="crudTarget" value="${p && p.targetdate ? p.targetdate : ''}"></div>
         </div>
         <div class="crud-field"><label class="crud-label">${t('modal.currentFocus')}</label><input class="crud-input" id="crudFocus" value="${p && p.currentfocus ? p.currentfocus : ''}"></div>
-        <div class="crud-field"><label class="crud-label">${t('modal.deliverables')}</label><input class="crud-input" id="crudDeliverables" value="${p && p.deliverables ? p.deliverables : ''}"></div>
         <div class="crud-field"><label class="crud-label">${t('col.blockers')}</label><input class="crud-input" id="crudBlockers" value="${p && p.blockers ? p.blockers : ''}"></div>
         <div class="crud-field"><label class="crud-label">${t('modal.nextMilestone')}</label><input class="crud-input" id="crudMilestone" value="${p && p.nextmilestone ? p.nextmilestone : ''}"></div>
     </div>`;
@@ -904,8 +902,8 @@
             name, portfolio: $('crudPortfolio').value, status: $('crudStatus').value,
             objective: $('crudObjective').value, owner: $('crudOwner').value, accountable: $('crudAccountable').value,
             progress: parseInt($('crudProgress').value) || 0,
-            currentfocus: $('crudFocus').value, deliverables: $('crudDeliverables').value,
-            blockers: $('crudBlockers').value, nextmilestone: $('crudMilestone').value, lastupdated: new Date().toISOString().slice(0, 10)
+            currentfocus: $('crudFocus').value, blockers: $('crudBlockers').value,
+            nextmilestone: $('crudMilestone').value, lastupdated: new Date().toISOString().slice(0, 10)
         };
         const sDate = $('crudStart').value;
         data.startdate = sDate ? sDate : null;
