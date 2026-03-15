@@ -877,7 +877,7 @@
             <div class="crud-field"><label class="crud-label">${t('crud.portfolio')}</label><select class="crud-select" id="crudPortfolio">${PORTFOLIOS.map(pf => `<option value="${pf.id}" ${p && p.portfolio === pf.id ? 'selected' : ''}>${t('pf.' + pf.id) || pf.name}</option>`).join('')}</select></div>
             <div class="crud-field"><label class="crud-label">${t('col.status')}</label><select class="crud-select" id="crudStatus">${STATUS_LIST.map(s => `<option value="${s}" ${p && p.status === s ? 'selected' : ''}>${s}</option>`).join('')}</select></div>
         </div>
-        <div class="crud-field"><label class="crud-label">${t('crud.objective')}</label><input class="crud-input" id="crudObjective" value="${p ? p.objective : ''}"></div>
+        <div class="crud-field"><label class="crud-label">${t('crud.objective')}</label><input class="crud-input" id="crudObjective" value="${p && p.objective ? p.objective : ''}"></div>
         <div class="crud-row">
             <div class="crud-field"><label class="crud-label">${t('col.owner')}</label><input class="crud-input" id="crudOwner" value="${p && p.owner ? p.owner : ''}"></div>
             <div class="crud-field"><label class="crud-label">${t('col.accountable')}</label><input class="crud-input" id="crudAccountable" value="${p && p.accountable ? p.accountable : ''}"></div>
@@ -890,6 +890,7 @@
             <div class="crud-field"><label class="crud-label">${t('modal.targetDate')}</label><input class="crud-input" type="date" id="crudTarget" value="${p && p.targetdate ? p.targetdate : ''}"></div>
         </div>
         <div class="crud-field"><label class="crud-label">${t('modal.currentFocus')}</label><input class="crud-input" id="crudFocus" value="${p && p.currentfocus ? p.currentfocus : ''}"></div>
+        <div class="crud-field"><label class="crud-label">${t('modal.deliverables')}</label><input class="crud-input" id="crudDeliverables" value="${p && p.deliverables ? p.deliverables : ''}"></div>
         <div class="crud-field"><label class="crud-label">${t('col.blockers')}</label><input class="crud-input" id="crudBlockers" value="${p && p.blockers ? p.blockers : ''}"></div>
         <div class="crud-field"><label class="crud-label">${t('modal.nextMilestone')}</label><input class="crud-input" id="crudMilestone" value="${p && p.nextmilestone ? p.nextmilestone : ''}"></div>
     </div>`;
@@ -903,8 +904,8 @@
             name, portfolio: $('crudPortfolio').value, status: $('crudStatus').value,
             objective: $('crudObjective').value, owner: $('crudOwner').value, accountable: $('crudAccountable').value,
             progress: parseInt($('crudProgress').value) || 0,
-            currentfocus: $('crudFocus').value, blockers: $('crudBlockers').value,
-            nextmilestone: $('crudMilestone').value, lastupdated: new Date().toISOString().slice(0, 10)
+            currentfocus: $('crudFocus').value, deliverables: $('crudDeliverables').value,
+            blockers: $('crudBlockers').value, nextmilestone: $('crudMilestone').value, lastupdated: new Date().toISOString().slice(0, 10)
         };
         const sDate = $('crudStart').value;
         data.startdate = sDate ? sDate : null;
