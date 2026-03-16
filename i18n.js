@@ -186,16 +186,53 @@ function t(key) {
 }
 
 function setLanguage(lang) {
-    currentLang = lang;
-    localStorage.setItem('sprix-pm-lang', lang);
-    document.documentElement.dir = lang === 'ar' ? 'rtl' : 'ltr';
-    document.documentElement.lang = lang;
-    document.body.classList.toggle('rtl', lang === 'ar');
-    document.querySelectorAll('.lang-btn').forEach(btn => {
-        btn.classList.toggle('active', btn.dataset.lang === lang);
-    });
-    updateAllText();
+    if (lang === currentLang) return;
+
+    const layout = document.getElementById('appLayout');
+    if (!layout) {
+        // Fallback if layout not ready (e.g. during auth)
+        executeLangSwitch(lang);
+        return;
+    }
+
+    // Phase 1: Flip out
+    layout.classList.add('flip-active');
+    layout.classList.add('flip-phase1');
+
+    setTimeout(() => {
+        // Phase 2: Switch logic at the 90-degree point
+        executeLangSwitch(lang);
+        
+        layout.classList.remove('flip-phase1');
+        layout.classList.add('flip-phase2');
+
+        // Force a reflow to ensure transition:none is applied
+        void layout.offsetWidth;
+
+        // Phase 3: Flip back in
+        setTimeout(() => {
+            layout.classList.remove('flip-phase2');
+            
+            // Cleanup after animation completes
+            setTimeout(() => {
+                layout.classList.remove('flip-active');
+            }, 600);
+        }, 50);
+    }, 600);
+
+    function executeLangSwitch(l) {
+        currentLang = l;
+        localStorage.setItem('sprix-pm-lang', l);
+        document.documentElement.dir = l === 'ar' ? 'rtl' : 'ltr';
+        document.documentElement.lang = l;
+        document.body.classList.toggle('rtl', l === 'ar');
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.lang === l);
+        });
+        updateAllText();
+    }
 }
+
 
 function loadLanguage() {
     const saved = localStorage.getItem('sprix-pm-lang');

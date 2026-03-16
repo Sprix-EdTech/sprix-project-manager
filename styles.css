@@ -2660,3 +2660,28 @@ body.rtl .stat-card-value {
 .num-ltr span {
     direction: ltr !important;
 }
+
+/* ============================================
+   PREMIUM ANIMATIONS: Dramatic Language Flip
+   ============================================ */
+.app-layout {
+    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.4s ease;
+    transform-style: preserve-3d;
+    backface-visibility: hidden;
+}
+
+.flip-active {
+    pointer-events: none; /* Disable interaction during flip */
+    perspective: 2000px;
+}
+
+.flip-phase1 {
+    transform: rotateY(90deg) scale(0.92);
+    opacity: 0;
+}
+
+.flip-phase2 {
+    transition: none !important;
+    transform: rotateY(-90deg) scale(0.92);
+    opacity: 0;
+}
