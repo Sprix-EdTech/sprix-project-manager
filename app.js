@@ -670,37 +670,51 @@
                 ctx.fillStyle = isDark ? '#94a3b8' : '#475569'; 
                 ctx.font = '500 10px Inter'; 
                 ctx.save(); 
+                // Adjust translation to pivot correctly - use a safe y offset
                 const pivotX = x + barW / 2;
-                const pivotY = margin.top + chartH + 12;
+                const pivotY = margin.top + chartH + 15;
                 ctx.translate(pivotX, pivotY); 
                 
                 if (currentLang === 'ar') {
-                    ctx.rotate(0.3); // Less steep for Arabic
+                    ctx.rotate(0.3); 
                     ctx.textAlign = 'right';
                 } else {
-                    ctx.rotate(-0.5); // Steep enough for JP/EN
+                    ctx.rotate(-0.5); 
                     ctx.textAlign = 'right';
                 }
                 
-                // MULTI-LINE LOGIC: No more ellipsis. Split long names.
+                // SMART MULTI-LINE LOGIC: Measure width and only split if necessary
                 const name = d.name;
-                // Split by spaces, ampersands, or for JP, just logical breaks
+                const limit = 75; // px threshold
+                const fullWidth = ctx.measureText(name).width;
+                
                 let lines = [];
-                if (name.includes('&')) {
-                    lines = name.split('&').map((s, idx) => idx === 0 ? s.trim() + ' &' : s.trim());
-                } else if (name.includes('＆')) {
-                    lines = name.split('＆').map((s, idx) => idx === 0 ? s.trim() + ' ＆' : s.trim());
-                } else if (name.length > 10 && currentLang === 'ja') {
-                    // Split roughly in half for JP if long
-                    lines = [name.slice(0, Math.ceil(name.length / 2)), name.slice(Math.ceil(name.length / 2))];
-                } else if (name.length > 15 && name.includes(' ')) {
-                    const idx = name.lastIndexOf(' ', 15);
-                    lines = [name.slice(0, idx), name.slice(idx + 1)];
+                if (fullWidth > limit) {
+                    // Try to split smartly
+                    if (name.includes('&')) {
+                        lines = name.split('&').map((s, idx) => idx === 0 ? s.trim() + ' &' : s.trim());
+                    } else if (name.includes('＆')) {
+                        lines = name.split('＆').map((s, idx) => idx === 0 ? s.trim() + ' ＆' : s.trim());
+                    } else if (currentLang === 'ja' && name.length > 8) {
+                        // Split roughly in half for JA
+                        const mid = Math.ceil(name.length / 2);
+                        lines = [name.slice(0, mid), name.slice(mid)];
+                    } else if (name.includes(' ')) {
+                        const midIdx = name.lastIndexOf(' ', name.length / 2 + 5);
+                        if (midIdx !== -1) {
+                            lines = [name.slice(0, midIdx), name.slice(midIdx + 1)];
+                        } else {
+                            lines = [name];
+                        }
+                    } else {
+                        lines = [name];
+                    }
                 } else {
                     lines = [name];
                 }
 
                 lines.forEach((line, lx) => {
+                    // Adjust y for multiple lines in the rotated space
                     ctx.fillText(line, 0, lx * 12);
                 });
                 
@@ -710,6 +724,7 @@
         }
         requestAnimationFrame(draw);
     }
+
 
 
     function drawProgressChart() { animateProgressChart(); }

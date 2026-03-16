@@ -425,6 +425,19 @@ select {
     position: relative;
     white-space: normal;
     line-height: 1.4;
+    justify-content: flex-start; /* Ensure start-alignment */
+}
+
+.nav-item span:not(.nav-icon):not(.nav-badge) {
+    flex: 1;
+    text-align: left; /* Explicitly align text to start */
+    padding-left: 2px; /* Tiny buffer */
+}
+
+.rtl .nav-item span:not(.nav-icon):not(.nav-badge) {
+    text-align: right;
+    padding-left: 0;
+    padding-right: 2px;
 }
 
 
@@ -463,10 +476,14 @@ select {
 
 .nav-icon {
     font-size: calc(var(--font-scale, 1) * 16px);
-    width: 22px;
+    width: 24px; /* Slightly increased for buffer */
     text-align: center;
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
+
 
 .nav-badge {
     background: rgba(99, 102, 241, 0.25);
