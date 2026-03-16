@@ -859,8 +859,9 @@ select {
     text-align: center;
     transition: all var(--transition-fast);
     position: relative;
-    overflow: hidden;
+    /* overflow: hidden; removed to prevent clipping */
 }
+
 
 .stat-clickable {
     cursor: pointer;
@@ -954,7 +955,9 @@ select {
     min-height: 180px;
     display: flex;
     flex-direction: column;
+    /* overflow: hidden; removed to prevent clipping */
 }
+
 
 
 .portfolio-card::before {
@@ -1108,17 +1111,19 @@ select {
     grid-template-columns: 1fr 2fr;
     gap: 14px;
     margin-bottom: 20px;
+    align-items: flex-start; /* Allow items to have their own height */
 }
 
+
 .chart-card {
-    background: var(--bg-card);
-    border: 1px solid var(--border-color);
-    border-radius: var(--radius-lg);
     padding: 20px;
     display: flex;
     flex-direction: column;
     align-items: center;
+    position: relative;
+    min-height: 440px; /* Accommodate the 380px canvas + title + padding */
 }
+
 
 .chart-title {
     font-size: calc(var(--font-scale, 1) * 13px);

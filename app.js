@@ -627,7 +627,7 @@
         const canvas = $('chartProgress'); if (!canvas) return;
         const ctx = canvas.getContext('2d');
         const dpr = window.devicePixelRatio || 1;
-        const w = 500, h = 340; // Increased height from 300
+        const w = 500, h = 380; // Significantly increased height from 340 to 380
         canvas.width = w * dpr; canvas.height = h * dpr;
         canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
         ctx.scale(dpr, dpr);
@@ -637,7 +637,7 @@
             const ps = allFiltered.filter(p => p.portfolio === pf.id); 
             return { name: (t('pf.' + pf.id) || pf.name), avg: ps.length ? Math.round(ps.reduce((s, p) => s + p.progress, 0) / ps.length) : 0, color: pf.color }; 
         });
-        const margin = { top: 20, right: 30, bottom: 100, left: 40 }; // Increased bottom margin significantly
+        const margin = { top: 20, right: 30, bottom: 140, left: 40 }; // Increased from 100 to 140 for rotated names
         const chartW = w - margin.left - margin.right, chartH = h - margin.top - margin.bottom;
         const gap = chartW / data.length, barW = gap * 0.6;
         const dur = 800; let startT = null;
@@ -668,34 +668,49 @@
                     ctx.globalAlpha = 1; 
                 } 
                 ctx.fillStyle = isDark ? '#94a3b8' : '#475569'; 
-                ctx.font = '500 10px Inter'; // Slightly larger font
+                ctx.font = '500 10px Inter'; 
                 ctx.save(); 
-                // Adjust translation to pivot correctly
                 const pivotX = x + barW / 2;
-                const pivotY = margin.top + chartH + 10;
+                const pivotY = margin.top + chartH + 12;
                 ctx.translate(pivotX, pivotY); 
-                // Adjust rotation for RTL and LTR specifically to avoid cutting off
+                
                 if (currentLang === 'ar') {
                     ctx.rotate(0.3); // Less steep for Arabic
                     ctx.textAlign = 'right';
                 } else {
-                    ctx.rotate(-0.4); // Adjusted for JP/EN
+                    ctx.rotate(-0.5); // Steep enough for JP/EN
                     ctx.textAlign = 'right';
                 }
                 
-                // Allow labels to wrap if very long (manual split)
+                // MULTI-LINE LOGIC: No more ellipsis. Split long names.
                 const name = d.name;
-                if (name.length > 15) {
-                    ctx.fillText(name.slice(0, 15) + '…', 0, 0); 
+                // Split by spaces, ampersands, or for JP, just logical breaks
+                let lines = [];
+                if (name.includes('&')) {
+                    lines = name.split('&').map((s, idx) => idx === 0 ? s.trim() + ' &' : s.trim());
+                } else if (name.includes('＆')) {
+                    lines = name.split('＆').map((s, idx) => idx === 0 ? s.trim() + ' ＆' : s.trim());
+                } else if (name.length > 10 && currentLang === 'ja') {
+                    // Split roughly in half for JP if long
+                    lines = [name.slice(0, Math.ceil(name.length / 2)), name.slice(Math.ceil(name.length / 2))];
+                } else if (name.length > 15 && name.includes(' ')) {
+                    const idx = name.lastIndexOf(' ', 15);
+                    lines = [name.slice(0, idx), name.slice(idx + 1)];
                 } else {
-                    ctx.fillText(name, 0, 0); 
+                    lines = [name];
                 }
+
+                lines.forEach((line, lx) => {
+                    ctx.fillText(line, 0, lx * 12);
+                });
+                
                 ctx.restore(); 
             });
             if (p < 1) requestAnimationFrame(draw);
         }
         requestAnimationFrame(draw);
     }
+
 
     function drawProgressChart() { animateProgressChart(); }
 
