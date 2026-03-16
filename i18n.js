@@ -189,13 +189,17 @@ function setLanguage(lang) {
     if (lang === currentLang) return;
 
     const layout = document.getElementById('appLayout');
-    if (!layout) {
-        // Fallback if layout not ready (e.g. during auth)
+    const isOldRtl = currentLang === 'ar';
+    const isNewRtl = lang === 'ar';
+    const directionChanged = isOldRtl !== isNewRtl;
+
+    if (!layout || !directionChanged) {
+        // No layout flip needed (e.g. EN <-> JP) or layout not ready
         executeLangSwitch(lang);
         return;
     }
 
-    // Phase 1: Flip out
+    // Phase 1: Flip out with staggered cards
     layout.classList.add('flip-active');
     layout.classList.add('flip-phase1');
 
@@ -206,7 +210,7 @@ function setLanguage(lang) {
         layout.classList.remove('flip-phase1');
         layout.classList.add('flip-phase2');
 
-        // Force a reflow to ensure transition:none is applied
+        // Force a reflow
         void layout.offsetWidth;
 
         // Phase 3: Flip back in
@@ -216,9 +220,9 @@ function setLanguage(lang) {
             // Cleanup after animation completes
             setTimeout(() => {
                 layout.classList.remove('flip-active');
-            }, 600);
+            }, 800);
         }, 50);
-    }, 600);
+    }, 800); // Slightly longer for the "rich" effect
 
     function executeLangSwitch(l) {
         currentLang = l;
@@ -232,6 +236,7 @@ function setLanguage(lang) {
         updateAllText();
     }
 }
+
 
 
 function loadLanguage() {
