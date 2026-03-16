@@ -627,27 +627,54 @@
         const canvas = $('chartProgress'); if (!canvas) return;
         const ctx = canvas.getContext('2d');
         const dpr = window.devicePixelRatio || 1;
-        const w = 500, h = 380; // Significantly increased height from 340 to 380
+        const w = 500, h = 380; 
         canvas.width = w * dpr; canvas.height = h * dpr;
         canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
         ctx.scale(dpr, dpr);
-        ctx.direction = 'ltr';
+        
+        ctx.direction = currentLang === 'ar' ? 'rtl' : 'ltr';
+        
         const allFiltered = getFilteredProjects();
-        const data = PORTFOLIOS.map(pf => { 
+        let data = PORTFOLIOS.map(pf => { 
             const ps = allFiltered.filter(p => p.portfolio === pf.id); 
             return { name: (t('pf.' + pf.id) || pf.name), avg: ps.length ? Math.round(ps.reduce((s, p) => s + p.progress, 0) / ps.length) : 0, color: pf.color }; 
         });
-        const margin = { top: 20, right: 30, bottom: 140, left: 40 }; // Increased from 100 to 140 for rotated names
+        
+        // Reverse data for RTL so columns start from right
+        if (currentLang === 'ar') data.reverse();
+
+        const margin = { top: 20, right: 40, bottom: 140, left: 40 }; 
         const chartW = w - margin.left - margin.right, chartH = h - margin.top - margin.bottom;
         const gap = chartW / data.length, barW = gap * 0.6;
         const dur = 800; let startT = null;
+        
         function draw(now) {
             if (!startT) startT = now;
             const p = Math.min((now - startT) / dur, 1);
             const ease = 1 - Math.pow(1 - p, 3);
             ctx.clearRect(0, 0, w, h);
             ctx.strokeStyle = isDark ? '#1e293b' : '#e2e8f0'; ctx.lineWidth = 1;
-            for (let i = 0; i <= 4; i++) { const y = margin.top + chartH - (chartH * i / 4); ctx.beginPath(); ctx.moveTo(margin.left, y); ctx.lineTo(w - margin.right, y); ctx.stroke(); ctx.fillStyle = isDark ? '#64748b' : '#94a3b8'; ctx.font = '500 10px Inter'; ctx.textAlign = 'right'; ctx.fillText((i * 25) + '%', margin.left - 6, y + 3); }
+            
+            // Draw Grid & Y-Axis
+            for (let i = 0; i <= 4; i++) { 
+                const y = margin.top + chartH - (chartH * i / 4); 
+                ctx.beginPath(); 
+                ctx.moveTo(margin.left, y); 
+                ctx.lineTo(w - margin.right, y); 
+                ctx.stroke(); 
+                
+                ctx.fillStyle = isDark ? '#64748b' : '#94a3b8'; 
+                ctx.font = '500 10px Inter'; 
+                
+                if (currentLang === 'ar') {
+                    ctx.textAlign = 'left';
+                    ctx.fillText((i * 25) + '%', margin.left + chartW + 6, y + 3);
+                } else {
+                    ctx.textAlign = 'right';
+                    ctx.fillText((i * 25) + '%', margin.left - 6, y + 3); 
+                }
+            }
+            
             data.forEach((d, i) => { 
                 const x = margin.left + i * gap + (gap - barW) / 2; 
                 const barH = (d.avg / 100) * chartH * ease; 
@@ -659,6 +686,7 @@
                 ctx.beginPath(); 
                 ctx.roundRect(x, y, barW, Math.max(margin.top + chartH - y, 0), [4, 4, 0, 0]); 
                 ctx.fill(); 
+                
                 if (p > 0.5) { 
                     ctx.fillStyle = isDark ? '#f1f5f9' : '#0f172a'; 
                     ctx.font = '700 10px Inter'; 
@@ -667,54 +695,45 @@
                     ctx.fillText(d.avg + '%', x + barW / 2, y - 5); 
                     ctx.globalAlpha = 1; 
                 } 
+                
                 ctx.fillStyle = isDark ? '#94a3b8' : '#475569'; 
                 ctx.font = '500 10px Inter'; 
                 ctx.save(); 
-                // Adjust translation to pivot correctly - use a safe y offset
+                
                 const pivotX = x + barW / 2;
                 const pivotY = margin.top + chartH + 15;
                 ctx.translate(pivotX, pivotY); 
                 
                 if (currentLang === 'ar') {
-                    ctx.rotate(0.3); 
-                    ctx.textAlign = 'right';
+                    ctx.rotate(0.5); // Slant upwards to the left in RTL
+                    ctx.textAlign = 'left';
                 } else {
                     ctx.rotate(-0.5); 
                     ctx.textAlign = 'right';
                 }
                 
-                // SMART MULTI-LINE LOGIC: Measure width and only split if necessary
                 const name = d.name;
-                const limit = 75; // px threshold
+                const limit = 75; 
                 const fullWidth = ctx.measureText(name).width;
                 
                 let lines = [];
                 if (fullWidth > limit) {
-                    // Try to split smartly
                     if (name.includes('&')) {
                         lines = name.split('&').map((s, idx) => idx === 0 ? s.trim() + ' &' : s.trim());
                     } else if (name.includes('＆')) {
                         lines = name.split('＆').map((s, idx) => idx === 0 ? s.trim() + ' ＆' : s.trim());
                     } else if (currentLang === 'ja' && name.length > 8) {
-                        // Split roughly in half for JA
                         const mid = Math.ceil(name.length / 2);
                         lines = [name.slice(0, mid), name.slice(mid)];
                     } else if (name.includes(' ')) {
                         const midIdx = name.lastIndexOf(' ', name.length / 2 + 5);
                         if (midIdx !== -1) {
                             lines = [name.slice(0, midIdx), name.slice(midIdx + 1)];
-                        } else {
-                            lines = [name];
-                        }
-                    } else {
-                        lines = [name];
-                    }
-                } else {
-                    lines = [name];
-                }
+                        } else { lines = [name]; }
+                    } else { lines = [name]; }
+                } else { lines = [name]; }
 
                 lines.forEach((line, lx) => {
-                    // Adjust y for multiple lines in the rotated space
                     ctx.fillText(line, 0, lx * 12);
                 });
                 
@@ -724,6 +743,7 @@
         }
         requestAnimationFrame(draw);
     }
+
 
 
 

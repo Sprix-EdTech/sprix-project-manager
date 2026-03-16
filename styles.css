@@ -426,7 +426,15 @@ select {
     white-space: normal;
     line-height: 1.4;
     justify-content: flex-start; /* Ensure start-alignment */
+    transition: background var(--transition-fast), padding var(--transition-base);
 }
+
+.rtl .nav-item {
+    line-height: 1.6; /* Increased for Arabic multi-line */
+    padding-top: 10px;
+    padding-bottom: 10px;
+}
+
 
 .nav-item span:not(.nav-icon):not(.nav-badge) {
     flex: 1;
@@ -1083,7 +1091,13 @@ select {
     border-radius: var(--radius-full);
     background: linear-gradient(90deg, var(--primary-500), var(--accent-500));
     transition: width 1s ease-out;
+    transform-origin: left;
 }
+
+.rtl .pcard-progress-bar {
+    transform: rotateY(180deg); /* Mirror the bar container for RTL filling */
+}
+
 
 .pcard-status-bar {
     display: flex;
@@ -1093,6 +1107,11 @@ select {
     overflow: hidden;
     margin-bottom: 10px;
 }
+
+.rtl .pcard-status-bar {
+    flex-direction: row-reverse; /* Mirror the segment order in RTL */
+}
+
 
 .pcard-status-segment {
     height: 100%;
