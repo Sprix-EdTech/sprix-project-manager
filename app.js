@@ -627,15 +627,17 @@
         const canvas = $('chartProgress'); if (!canvas) return;
         const ctx = canvas.getContext('2d');
         const dpr = window.devicePixelRatio || 1;
-        const w = 500, h = 300;
+        const w = 500, h = 340; // Increased height from 300
         canvas.width = w * dpr; canvas.height = h * dpr;
         canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
         ctx.scale(dpr, dpr);
         ctx.direction = 'ltr';
         const allFiltered = getFilteredProjects();
-        // Removed .slice(0, 12) so full names are rendered
-        const data = PORTFOLIOS.map(pf => { const ps = allFiltered.filter(p => p.portfolio === pf.id); return { name: (t('pf.' + pf.id) || pf.name), avg: ps.length ? Math.round(ps.reduce((s, p) => s + p.progress, 0) / ps.length) : 0, color: pf.color }; });
-        const margin = { top: 20, right: 20, bottom: 70, left: 40 }; // Increased bottom margin
+        const data = PORTFOLIOS.map(pf => { 
+            const ps = allFiltered.filter(p => p.portfolio === pf.id); 
+            return { name: (t('pf.' + pf.id) || pf.name), avg: ps.length ? Math.round(ps.reduce((s, p) => s + p.progress, 0) / ps.length) : 0, color: pf.color }; 
+        });
+        const margin = { top: 20, right: 30, bottom: 100, left: 40 }; // Increased bottom margin significantly
         const chartW = w - margin.left - margin.right, chartH = h - margin.top - margin.bottom;
         const gap = chartW / data.length, barW = gap * 0.6;
         const dur = 800; let startT = null;
@@ -666,18 +668,35 @@
                     ctx.globalAlpha = 1; 
                 } 
                 ctx.fillStyle = isDark ? '#94a3b8' : '#475569'; 
-                ctx.font = '500 9px Inter'; 
+                ctx.font = '500 10px Inter'; // Slightly larger font
                 ctx.save(); 
-                ctx.translate(x + barW / 2 + (currentLang === 'ar' ? -5 : 5), margin.top + chartH + 12); 
-                ctx.rotate(currentLang === 'ar' ? 0.6 : -0.6); // Increased rotation angle
-                ctx.textAlign = currentLang === 'ar' ? 'left' : 'right'; // Right align to pivot at the bar center
-                ctx.fillText(d.name, 0, 0); 
+                // Adjust translation to pivot correctly
+                const pivotX = x + barW / 2;
+                const pivotY = margin.top + chartH + 10;
+                ctx.translate(pivotX, pivotY); 
+                // Adjust rotation for RTL and LTR specifically to avoid cutting off
+                if (currentLang === 'ar') {
+                    ctx.rotate(0.3); // Less steep for Arabic
+                    ctx.textAlign = 'right';
+                } else {
+                    ctx.rotate(-0.4); // Adjusted for JP/EN
+                    ctx.textAlign = 'right';
+                }
+                
+                // Allow labels to wrap if very long (manual split)
+                const name = d.name;
+                if (name.length > 15) {
+                    ctx.fillText(name.slice(0, 15) + '…', 0, 0); 
+                } else {
+                    ctx.fillText(name, 0, 0); 
+                }
                 ctx.restore(); 
             });
             if (p < 1) requestAnimationFrame(draw);
         }
         requestAnimationFrame(draw);
     }
+
     function drawProgressChart() { animateProgressChart(); }
 
     // ========== TABLE ==========

@@ -423,7 +423,10 @@ select {
     font-weight: 500;
     transition: all var(--transition-fast);
     position: relative;
+    white-space: normal;
+    line-height: 1.4;
 }
+
 
 .nav-item:hover {
     background: var(--bg-sidebar-hover);
@@ -947,8 +950,12 @@ select {
     cursor: pointer;
     transition: all var(--transition-base);
     position: relative;
-    overflow: hidden;
+    height: auto;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
 }
+
 
 .portfolio-card::before {
     content: '';
@@ -1017,7 +1024,10 @@ select {
     font-size: calc(var(--font-scale, 1) * 14px);
     font-weight: 700;
     margin-bottom: 10px;
+    white-space: normal;
+    line-height: 1.4;
 }
+
 
 .pcard-progress {
     margin-bottom: 10px;
@@ -1071,9 +1081,11 @@ select {
 
 .pcard-stats {
     display: flex;
-    gap: 10px;
+    gap: 8px 12px;
     flex-wrap: wrap;
+    margin-top: auto;
 }
+
 
 .pcard-stat {
     display: flex;
