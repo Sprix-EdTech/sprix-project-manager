@@ -518,8 +518,8 @@
 
                 card.querySelector('.pcard-title').textContent = t('pf.' + pf.id) || pf.name;
                 card.querySelector('.pcard-progress-label').textContent = t('hub.avgProgress');
-                card.querySelector('.pcard-count').textContent = `${ps.length} ${t('hub.projects')}`;
-                card.querySelector('.pcard-progress-value').textContent = `${avg}%`;
+                card.querySelector('.pcard-count').innerHTML = `<span class="num-ltr">${ps.length}</span> ${t('hub.projects')}`;
+                card.querySelector('.pcard-progress-value').innerHTML = `<span class="num-ltr">${avg}%</span>`;
                 
                 const fill = card.querySelector('.pcard-progress-fill');
                 fill.dataset.target = avg;
@@ -536,9 +536,9 @@
             const avg = ps.length ? Math.round(ps.reduce((s, p) => s + p.progress, 0) / ps.length) : 0;
             const sc = {}; STATUS_LIST.forEach(s => sc[s] = 0); ps.forEach(p => sc[p.status]++);
             return `<div class="portfolio-card" data-portfolio="${pf.id}" onclick="window._navPortfolio('${pf.id}')">
-            <div class="pcard-header"><span class="pcard-icon" style="font-size:28px">${pf.icon}</span><span class="pcard-count">${ps.length} ${t('hub.projects')}</span></div>
+            <div class="pcard-header"><span class="pcard-icon" style="font-size:28px">${pf.icon}</span><span class="pcard-count"><span class="num-ltr">${ps.length}</span> ${t('hub.projects')}</span></div>
             <div class="pcard-title">${t('pf.' + pf.id) || pf.name}</div>
-            <div class="pcard-progress"><div class="pcard-progress-header"><span class="pcard-progress-label">${t('hub.avgProgress')}</span><span class="pcard-progress-value">${avg}%</span></div><div class="pcard-progress-bar"><div class="pcard-progress-fill" style="width:0%" data-target="${avg}"></div></div></div>
+            <div class="pcard-progress"><div class="pcard-progress-header"><span class="pcard-progress-label">${t('hub.avgProgress')}</span><span class="pcard-progress-value"><span class="num-ltr">${avg}%</span></span></div><div class="pcard-progress-bar"><div class="pcard-progress-fill" style="width:0%" data-target="${avg}"></div></div></div>
             <div class="pcard-status-bar">${STATUS_LIST.map(s => `<div class="pcard-status-segment" style="flex:${sc[s]};background:${STATUS_COLORS[s]}"></div>`).join('')}</div>
             <div class="pcard-stats">${STATUS_LIST.filter(s => sc[s] > 0).map(s => `<div class="pcard-stat"><span class="pcard-stat-dot" style="background:${STATUS_COLORS[s]}"></span>${sc[s]} ${t(getStatusKey(s))}</div>`).join('')}</div>
         </div>`;
@@ -578,6 +578,7 @@
         canvas.width = 300 * dpr; canvas.height = 300 * dpr;
         canvas.style.width = '300px'; canvas.style.height = '300px';
         ctx.scale(dpr, dpr);
+        ctx.direction = 'ltr';
         const allFiltered = getFilteredProjects();
         const counts = STATUS_LIST.map(s => allFiltered.filter(p => p.status === s).length);
         const total = counts.reduce((a, b) => a + b, 0) || 1;
@@ -601,7 +602,7 @@
                     if (counts[i] === 0) return; 
                     const k = s.replace(' ', '');
                     const tKey = 'status.' + k.charAt(0).toLowerCase() + k.slice(1);
-                    const text = `${t(tKey)} (${counts[i]})`;
+                    const text = currentLang === 'ar' ? `(${counts[i]}) ${t(tKey)}` : `${t(tKey)} (${counts[i]})`;
                     const textWidth = ctx.measureText(text).width;
                     if (lx + textWidth + 16 > 290) { lx = 20; ly += 16; }
                     ctx.fillStyle = colors[i]; 
@@ -628,6 +629,7 @@
         canvas.width = w * dpr; canvas.height = h * dpr;
         canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
         ctx.scale(dpr, dpr);
+        ctx.direction = 'ltr';
         const allFiltered = getFilteredProjects();
         // Removed .slice(0, 12) so full names are rendered
         const data = PORTFOLIOS.map(pf => { const ps = allFiltered.filter(p => p.portfolio === pf.id); return { name: (t('pf.' + pf.id) || pf.name), avg: ps.length ? Math.round(ps.reduce((s, p) => s + p.progress, 0) / ps.length) : 0, color: pf.color }; });
@@ -694,7 +696,7 @@
             return `<tr class="${p.blockers ? 'has-blocker' : ''}">
             <td><span class="cell-project-name" onclick="window._openModal(${p.id})">${p.name}</span></td>
             <td><span class="status-badge ${sc}"><span class="status-dot ${sc}"></span>${p.status}</span></td>
-            <td><div class="progress-cell"><div class="progress-bar-mini"><div class="progress-bar-fill" style="width:${p.progress}%;background:${progressColor(p.progress)}"></div></div><span class="progress-value">${p.progress}%</span></div></td>
+            <td><div class="progress-cell"><div class="progress-bar-mini"><div class="progress-bar-fill" style="width:${p.progress}%;background:${progressColor(p.progress)}"></div></div><span class="progress-value num-ltr">${p.progress}%</span></div></td>
             <td>${p.owner}</td>
             <td class="text-truncate" style="max-width:160px" title="${p.currentfocus}">${p.currentfocus}</td>
             <td style="color:${p.blockers ? 'var(--status-off-track)' : 'inherit'};font-weight:${p.blockers ? '600' : '400'}">${p.blockers || '—'}</td>
@@ -722,7 +724,7 @@
             return `<div class="kanban-column" data-status="${sc}" ondragover="window._handleDragOver(event)" ondragleave="window._handleDragLeave(event)" ondrop="window._handleDrop(event, '${status}')">
                 <div class="kanban-column-header">
                     <span class="kanban-column-title"><span class="status-dot ${sc}"></span>${t(tKey) || status}</span>
-                    <span class="kanban-column-count">${items.length}</span>
+                    <span class="kanban-column-count num-ltr">${items.length}</span>
                 </div>
                 ${items.map(p => { 
                     const pf = PORTFOLIOS.find(x => x.id === p.portfolio); 
@@ -731,7 +733,7 @@
                         <div class="kanban-card-title">${p.name}</div>
                         <div class="kanban-card-footer">
                             <span class="kanban-card-owner">${p.owner}</span>
-                            <span class="kanban-card-progress" style="color:${progressColor(p.progress)}">${p.progress}%</span>
+                            <span class="kanban-card-progress num-ltr" style="color:${progressColor(p.progress)}">${p.progress}%</span>
                         </div>
                         ${p.nextmilestone ? `<div class="kanban-card-milestone">🏁 ${p.nextmilestone}</div>` : ''}
                     </div>`; 
@@ -815,7 +817,9 @@
         const h = marginTop + ps.length * rowH + 40;
         const w = Math.max(1100, canvas.parentElement.clientWidth - 48);
         canvas.width = w * dpr; canvas.height = h * dpr; canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
-        ctx.scale(dpr, dpr); ctx.clearRect(0, 0, w, h);
+        ctx.scale(dpr, dpr); 
+        ctx.direction = 'ltr';
+        ctx.clearRect(0, 0, w, h);
         if (!ps.length) { ctx.fillStyle = '#94a3b8'; ctx.font = '500 14px Inter'; ctx.textAlign = 'center'; ctx.fillText('No projects', w / 2, h / 2); return; }
         const dates = ps.flatMap(p => [new Date(p.startdate), new Date(p.targetdate)]);
         const minD = new Date(Math.min(...dates)); const maxD = new Date(Math.max(...dates));
@@ -852,7 +856,7 @@
             <div class="modal-field"><div class="modal-field-label">${t('col.owner')}</div><div class="modal-field-value">${p.owner}</div></div>
             <div class="modal-field"><div class="modal-field-label">${t('col.accountable')}</div><div class="modal-field-value">${p.accountable}</div></div>
             <div class="modal-field"><div class="modal-field-label">${t('col.stakeholders')}</div><div class="modal-field-value">${(p.stakeholders || []).join(', ')}</div></div>
-            <div class="modal-field"><div class="modal-field-label">${t('col.progress')}</div><div class="modal-field-value"><div class="progress-cell"><div class="progress-bar-mini"><div class="progress-bar-fill" style="width:${p.progress}%;background:${progressColor(p.progress)}"></div></div><span class="progress-value">${p.progress}%</span></div></div></div>
+            <div class="modal-field"><div class="modal-field-label">${t('col.progress')}</div><div class="modal-field-value"><div class="progress-cell"><div class="progress-bar-mini"><div class="progress-bar-fill" style="width:${p.progress}%;background:${progressColor(p.progress)}"></div></div><span class="progress-value num-ltr">${p.progress}%</span></div></div></div>
             <div class="modal-field"><div class="modal-field-label">${t('modal.startDate')}</div><div class="modal-field-value">${formatDate(p.startdate)}</div></div>
             <div class="modal-field"><div class="modal-field-label">${t('modal.targetDate')}</div><div class="modal-field-value">${formatDate(p.targetdate)}</div></div>
         </div></div>

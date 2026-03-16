@@ -2631,3 +2631,24 @@ body {
     height: 1.1em;
     line-height: 1.1em;
 }
+
+/* Fix for Arabic Number Formatting */
+.stat-card-value,
+.pcard-progress-value,
+.progress-value,
+.kanban-card-progress,
+.num-ltr {
+    direction: ltr !important;
+    display: inline-block;
+    unicode-bidi: isolate;
+}
+
+/* Ensure Odometer digits stay in LTR order */
+.stat-card-value {
+    display: flex;
+    justify-content: flex-end; /* Keep it on the side but LTR internally */
+}
+
+body.rtl .stat-card-value {
+    justify-content: flex-start;
+}
