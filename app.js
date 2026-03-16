@@ -448,6 +448,8 @@
         renderMilestones();
     }
     function animateCount(el, target) {
+        if (!el) return;
+        el.classList.add('stat-card-value');
         const targetStr = String(target);
         if (el.dataset.val === targetStr) return;
         el.dataset.val = targetStr;
@@ -1301,7 +1303,13 @@
         observer.observe(el);
     }
 
-    function formatDate(str) { if (!str) return '—'; const d = new Date(str); const m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; return m[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear(); }
+    function formatDate(str) { 
+        if (!str) return '—'; 
+        const d = new Date(str); 
+        const m = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec']; 
+        const formatted = m[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear();
+        return `<span class="num-ltr">${formatted}</span>`;
+    }
 
     $('blockerAlert')?.addEventListener('click', () => { if (currentView !== 'hub') navigateTo('hub', null); setTimeout(() => $('blockerList')?.scrollIntoView({ behavior: 'smooth' }), 100); });
 

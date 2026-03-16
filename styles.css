@@ -2639,16 +2639,24 @@ body {
 .kanban-card-progress,
 .num-ltr {
     direction: ltr !important;
-    display: inline-block;
-    unicode-bidi: isolate;
+    unicode-bidi: isolate !important;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: baseline;
+    gap: 0;
 }
 
-/* Ensure Odometer digits stay in LTR order */
+/* Ensure Odometer digits stay in LTR order and alignment */
 .stat-card-value {
-    display: flex;
-    justify-content: flex-end; /* Keep it on the side but LTR internally */
+    justify-content: flex-end;
 }
 
 body.rtl .stat-card-value {
-    justify-content: flex-start;
+    justify-content: flex-start; /* Correctly align to the left side of the card in RTL if needed, or keep it consistent */
+}
+
+/* Force LTR order for nested spans inside numeric containers */
+.stat-card-value span,
+.num-ltr span {
+    direction: ltr !important;
 }
