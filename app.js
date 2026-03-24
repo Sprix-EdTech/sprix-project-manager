@@ -254,7 +254,28 @@
 
     // ========== SEARCH ==========
     function setupSearch() {
-        $('searchInput').addEventListener('input', e => {
+        const searchBox = document.querySelector('.search-box');
+        const searchInput = $('searchInput');
+
+        // Mobile: expand search box when clicking the icon area
+        searchBox?.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && !searchBox.classList.contains('expanded')) {
+                e.stopPropagation();
+                searchBox.classList.add('expanded');
+                searchInput.focus();
+            }
+        });
+
+        // Mobile: collapse search box when clicking outside
+        document.addEventListener('click', (e) => {
+            if (window.innerWidth <= 768 && searchBox?.classList.contains('expanded')) {
+                if (!searchBox.contains(e.target) && !searchQuery) {
+                    searchBox.classList.remove('expanded');
+                }
+            }
+        });
+
+        searchInput.addEventListener('input', e => {
             searchQuery = e.target.value.toLowerCase();
             $('searchClear').style.display = searchQuery ? 'flex' : 'none';
             if (currentView === 'hub') renderHub();
@@ -263,14 +284,44 @@
         });
 
         $('searchClear')?.addEventListener('click', () => {
-            $('searchInput').value = '';
+            searchInput.value = '';
             searchQuery = '';
             $('searchClear').style.display = 'none';
+            // Collapse on mobile after clearing
+            if (window.innerWidth <= 768) {
+                document.querySelector('.search-box')?.classList.remove('expanded');
+            }
             if (currentView === 'hub') renderHub();
             else if (currentView === 'table') renderTable();
             else if (currentView === 'kanban') renderKanban();
         });
     }
+
+    // ========== GLOBE LANGUAGE DROPDOWN (Mobile) ==========
+    window._toggleLangDropdown = function () {
+        const btns = $('langButtons');
+        btns.classList.toggle('open');
+    };
+
+    // Close globe dropdown when clicking outside
+    document.addEventListener('click', (e) => {
+        const switcher = document.getElementById('langSwitcher');
+        const btns = document.getElementById('langButtons');
+        if (btns && switcher && !switcher.contains(e.target)) {
+            btns.classList.remove('open');
+        }
+    });
+
+    // Close globe dropdown after selecting a language (on mobile)
+    const origSetLanguage = window.setLanguage;
+    if (origSetLanguage) {
+        window.setLanguage = function (...args) {
+            origSetLanguage.apply(this, args);
+            const btns = document.getElementById('langButtons');
+            if (btns) btns.classList.remove('open');
+        };
+    }
+
 
     // ========== FILTERS ==========
     function setupFilters() {
