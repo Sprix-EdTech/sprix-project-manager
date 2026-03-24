@@ -2839,166 +2839,81 @@ body.rtl .stat-card-value {
 }
 
 /* ============================================
-   PREMIUM ANIMATIONS: 3D Page-Turn Transition
+   PREMIUM ANIMATIONS: Rich Coin-Flip Transition
    ============================================ */
-
-/* ── EN ↔ JP Cross-fade (light, elegant) ── */
-.lang-fade-out {
-    animation: langFadeOut 0.2s ease forwards;
-}
-.lang-fade-in {
-    animation: langFadeIn 0.35s ease forwards;
-}
-@keyframes langFadeOut {
-    to { opacity: 0; transform: scale(0.98); }
-}
-@keyframes langFadeIn {
-    from { opacity: 0; transform: scale(0.98); }
-    to   { opacity: 1; transform: scale(1); }
-}
-
-/* ── Page-Turn: Base ── */
 .app-layout {
+    transition: transform 0.8s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease;
     transform-style: preserve-3d;
-    backface-visibility: hidden;
 }
 
-.page-turn-active {
+.flip-active {
     pointer-events: none;
-    perspective: 1200px;
+    perspective: 2000px;
+    overflow: hidden;
 }
 
-/* ── Page OUT: turns 90deg to the edge ── */
-.page-out {
-    transition: transform 0.7s cubic-bezier(0.5, 0, 0.75, 0),
-                opacity   0.5s ease;
-    transform: rotateY(90deg) scale(0.98);
+/* Base rotation for the entire screen */
+.flip-phase1 {
+    transform: rotateY(90deg) scale(0.9);
     opacity: 0;
 }
 
-/* TO Arabic: turn toward the LEFT (negative Y) — hinge is on right edge */
-.page-to-rtl.page-out {
-    transform: rotateY(-90deg) scale(0.98);
-}
-
-/* FROM Arabic: turn toward the RIGHT (positive Y) — hinge is on left edge */
-.page-to-ltr.page-out {
-    transform: rotateY(90deg) scale(0.98);
-}
-
-/* ── Page IN: starting position (instant, no transition) ── */
-.page-in-start {
+.flip-phase2 {
     transition: none !important;
+    transform: rotateY(-90deg) scale(0.9);
     opacity: 0;
 }
 
-/* TO Arabic: new page starts from the opposite side */
-.page-to-rtl.page-in-start {
-    transform: rotateY(60deg) scale(0.98);
-}
-
-/* FROM Arabic: new page starts from the opposite side */
-.page-to-ltr.page-in-start {
-    transform: rotateY(-60deg) scale(0.98);
-}
-
-/* ── Page IN: settles to flat ── */
-.page-in {
-    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
-                opacity   0.35s ease;
-    transform: rotateY(0deg) scale(1) !important;
-    opacity: 1 !important;
-}
-
-/* ── Book Shadow: deepens as the page lifts ── */
-.page-turn-active::after {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background: linear-gradient(
-        to right,
-        rgba(0, 0, 0, 0.25) 0%,
-        transparent 40%,
-        transparent 60%,
-        rgba(0, 0, 0, 0.25) 100%
-    );
-    z-index: 9999;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.5s ease;
-}
-
-.page-turn-active.page-out::after {
-    opacity: 1;
-}
-
-/* ── Light Reflection on the "back" of the turning page ── */
-.page-turn-active::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    z-index: 9998;
-    pointer-events: none;
-    opacity: 0;
-    transition: opacity 0.4s ease;
-}
-
-.page-to-rtl.page-out::before {
-    background: linear-gradient(
-        to left,
-        rgba(255, 255, 255, 0.08) 0%,
-        rgba(255, 255, 255, 0.03) 30%,
-        transparent 70%
-    );
-    opacity: 1;
-}
-
-.page-to-ltr.page-out::before {
-    background: linear-gradient(
-        to right,
-        rgba(255, 255, 255, 0.08) 0%,
-        rgba(255, 255, 255, 0.03) 30%,
-        transparent 70%
-    );
-    opacity: 1;
-}
-
-/* ── Card Cascade: cards settle with a gentle staggered drop ── */
-.page-turn-active .portfolio-card,
-.page-turn-active .stat-card {
-    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
-                opacity   0.4s ease;
+/* Individual Card "Coin Flip" Staggering */
+.flip-active .portfolio-card,
+.flip-active .stat-card {
+    transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.4s ease;
     transform-style: preserve-3d;
 }
 
-.page-turn-active.page-in .stat-card,
-.page-turn-active.page-in .portfolio-card {
-    animation: cardSettle 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+/* Coin Glint Overlay */
+.flip-active::after {
+    content: '';
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    width: 200vw;
+    height: 200vh;
+    background: linear-gradient(135deg, 
+        rgba(255,215,0,0) 0%, 
+        rgba(255,215,0,0.1) 45%, 
+        rgba(255,255,255,0.4) 50%, 
+        rgba(255,215,0,0.1) 55%, 
+        rgba(255,215,0,0) 100%);
+    transform: translate(-50%, -50%) rotate(45deg) translateX(-100%);
+    z-index: 10000;
+    pointer-events: none;
+    transition: transform 1.2s ease-in-out;
 }
 
-@keyframes cardSettle {
-    from {
-        opacity: 0;
-        transform: translateY(20px) scale(0.96);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+.flip-phase1::after {
+    transform: translate(-50%, -50%) rotate(45deg) translateX(100%);
 }
 
-/* Stagger: cards cascade in sequence */
-.page-turn-active.page-in .stat-card:nth-child(1) { animation-delay: 0.03s; }
-.page-turn-active.page-in .stat-card:nth-child(2) { animation-delay: 0.08s; }
-.page-turn-active.page-in .stat-card:nth-child(3) { animation-delay: 0.13s; }
-.page-turn-active.page-in .stat-card:nth-child(4) { animation-delay: 0.18s; }
-.page-turn-active.page-in .stat-card:nth-child(5) { animation-delay: 0.23s; }
+/* Staggered Card Flips */
+.flip-active.flip-phase1 .portfolio-card,
+.flip-active.flip-phase1 .stat-card {
+    transform: rotateY(180deg) scale(0.8);
+    opacity: 0;
+}
 
-.page-turn-active.page-in .portfolio-card:nth-child(1) { animation-delay: 0.05s; }
-.page-turn-active.page-in .portfolio-card:nth-child(2) { animation-delay: 0.10s; }
-.page-turn-active.page-in .portfolio-card:nth-child(3) { animation-delay: 0.15s; }
-.page-turn-active.page-in .portfolio-card:nth-child(4) { animation-delay: 0.20s; }
-.page-turn-active.page-in .portfolio-card:nth-child(5) { animation-delay: 0.25s; }
-.page-turn-active.page-in .portfolio-card:nth-child(6) { animation-delay: 0.30s; }
-.page-turn-active.page-in .portfolio-card:nth-child(7) { animation-delay: 0.35s; }
-.page-turn-active.page-in .portfolio-card:nth-child(8) { animation-delay: 0.40s; }
+/* Stagger Delays - Loop through children to create wave effect */
+.flip-active .stat-card:nth-child(1) { transition-delay: 0.05s; }
+.flip-active .stat-card:nth-child(2) { transition-delay: 0.10s; }
+.flip-active .stat-card:nth-child(3) { transition-delay: 0.15s; }
+.flip-active .stat-card:nth-child(4) { transition-delay: 0.20s; }
+.flip-active .stat-card:nth-child(5) { transition-delay: 0.25s; }
+
+.flip-active .portfolio-card:nth-child(1) { transition-delay: 0.1s; }
+.flip-active .portfolio-card:nth-child(2) { transition-delay: 0.15s; }
+.flip-active .portfolio-card:nth-child(3) { transition-delay: 0.2s; }
+.flip-active .portfolio-card:nth-child(4) { transition-delay: 0.25s; }
+.flip-active .portfolio-card:nth-child(5) { transition-delay: 0.3s; }
+.flip-active .portfolio-card:nth-child(6) { transition-delay: 0.35s; }
+.flip-active .portfolio-card:nth-child(7) { transition-delay: 0.4s; }
+.flip-active .portfolio-card:nth-child(8) { transition-delay: 0.45s; }

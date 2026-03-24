@@ -194,46 +194,31 @@ function setLanguage(lang) {
     const directionChanged = isOldRtl !== isNewRtl;
 
     if (!layout || !directionChanged) {
-        // EN ↔ JP: lightweight cross-fade
-        layout.classList.add('lang-fade-out');
-        setTimeout(() => {
-            executeLangSwitch(lang);
-            layout.classList.remove('lang-fade-out');
-            layout.classList.add('lang-fade-in');
-            setTimeout(() => layout.classList.remove('lang-fade-in'), 400);
-        }, 200);
+        // EN ↔ JP: instant switch, no animation
+        executeLangSwitch(lang);
         return;
     }
 
-    // ─── Premium Page-Turn for LTR ↔ RTL ───
-    // TO Arabic:   page turns from the RIGHT edge (like opening an Arabic book)
-    // FROM Arabic: page turns from the LEFT edge (turning back to LTR)
-    const enteringRtl = isNewRtl;
-    const dir = enteringRtl ? 'page-to-rtl' : 'page-to-ltr';
-
-    layout.style.transformOrigin = enteringRtl ? 'right center' : 'left center';
-    layout.classList.add('page-turn-active', dir, 'page-out');
+    // Arabic coin flip
+    layout.classList.add('flip-active');
+    layout.classList.add('flip-phase1');
 
     setTimeout(() => {
-        // Switch at the 90° point (page is edge-on, invisible)
         executeLangSwitch(lang);
         
-        layout.classList.remove('page-out');
-        layout.classList.add('page-in-start');
-        void layout.offsetWidth; // force reflow
+        layout.classList.remove('flip-phase1');
+        layout.classList.add('flip-phase2');
 
-        // Begin the "in" phase
-        requestAnimationFrame(() => {
-            layout.classList.remove('page-in-start');
-            layout.classList.add('page-in');
-        });
+        void layout.offsetWidth;
 
-        // Cleanup
         setTimeout(() => {
-            layout.classList.remove('page-turn-active', dir, 'page-in');
-            layout.style.transformOrigin = '';
-        }, 750);
-    }, 700);
+            layout.classList.remove('flip-phase2');
+            
+            setTimeout(() => {
+                layout.classList.remove('flip-active');
+            }, 800);
+        }, 50);
+    }, 800);
 
     function executeLangSwitch(l) {
         currentLang = l;
