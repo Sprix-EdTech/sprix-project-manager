@@ -188,6 +188,14 @@
         if (view === 'hub') {
             currentView = 'hub'; currentPortfolio = null;
             $('pageTitle').textContent = t('nav.hub');
+            
+            // Reset all filters and search when returning to the Hub
+            activeFilters = { status: [], owner: [] };
+            searchQuery = '';
+            if ($('searchInput')) $('searchInput').value = '';
+            if ($('searchClear')) $('searchClear').style.display = 'none';
+            document.querySelectorAll('.filter-pill').forEach(p => p.classList.remove('active'));
+            
             showView('viewHub'); renderHub();
         } else if (view === 'portfolio') {
             currentView = 'table'; currentPortfolio = portfolio;
