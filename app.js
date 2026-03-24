@@ -964,7 +964,8 @@
         $('btnAddProject')?.addEventListener('click', () => window._openCrudModal());
         $('crudClose').addEventListener('click', closeCrudModal);
         $('crudCancel').addEventListener('click', closeCrudModal);
-        $('crudOverlay').addEventListener('click', e => { if (e.target === $('crudOverlay')) closeCrudModal(); });
+        // $('crudOverlay').addEventListener('click', e => { if (e.target === $('crudOverlay')) closeCrudModal(); });
+
         $('crudSave').addEventListener('click', saveCrudForm);
     }
 
@@ -1085,7 +1086,8 @@
         $('btnAddPortfolio').addEventListener('click', () => openPfCrudModal());
         $('pfCrudClose').addEventListener('click', closePfCrudModal);
         $('pfCrudCancel').addEventListener('click', closePfCrudModal);
-        $('pfCrudOverlay').addEventListener('click', e => { if (e.target === $('pfCrudOverlay')) closePfCrudModal(); });
+        // $('pfCrudOverlay').addEventListener('click', e => { if (e.target === $('pfCrudOverlay')) closePfCrudModal(); });
+
         $('pfCrudSave').addEventListener('click', savePfCrud);
     }
 
