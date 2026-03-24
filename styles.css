@@ -642,16 +642,21 @@ select {
     display: none; /* Hidden on desktop */
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
-    font-size: 18px;
+    width: 34px;
+    height: 34px;
     border-radius: var(--radius-full);
     background: transparent;
     cursor: pointer;
     border: none;
     padding: 0;
-    transition: background var(--transition-fast);
+    transition: all var(--transition-fast);
+    color: var(--text-tertiary);
 }
+
+.lang-globe svg {
+    display: block;
+}
+
 
 .lang-globe:hover {
     background: var(--bg-hover);
@@ -2307,8 +2312,10 @@ select {
     }
 
     .filter-pills {
-        display: none;
+        display: flex;
+        gap: 8px;
     }
+
 }
 
 @media (max-width: 768px) {
@@ -2375,16 +2382,26 @@ select {
         order: 3;
         width: 100%;
         flex-basis: 100%;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 8px;
+        margin-top: 4px;
     }
 
-    /* Collapsible Search: show only icon by default */
+
+    .filter-pills {
+        order: 2;
+    }
+
     .search-box {
+        order: 1;
         max-width: 38px;
         overflow: hidden;
         cursor: pointer;
         transition: max-width 0.3s ease, padding 0.3s ease;
         padding: 5px 8px;
     }
+
 
     .search-box.expanded {
         max-width: 100%;
