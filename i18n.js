@@ -205,28 +205,35 @@ function setLanguage(lang) {
         return;
     }
 
-    // Arabic direction change: dramatic directional coin flip
+    // ─── Premium Page-Turn for LTR ↔ RTL ───
+    // TO Arabic:   page turns from the RIGHT edge (like opening an Arabic book)
+    // FROM Arabic: page turns from the LEFT edge (turning back to LTR)
     const enteringRtl = isNewRtl;
-    layout.classList.add('flip-active');
-    layout.classList.add(enteringRtl ? 'flip-to-rtl' : 'flip-to-ltr');
-    layout.classList.add('flip-phase1');
+    const dir = enteringRtl ? 'page-to-rtl' : 'page-to-ltr';
+
+    layout.style.transformOrigin = enteringRtl ? 'right center' : 'left center';
+    layout.classList.add('page-turn-active', dir, 'page-out');
 
     setTimeout(() => {
+        // Switch at the 90° point (page is edge-on, invisible)
         executeLangSwitch(lang);
+        
+        layout.classList.remove('page-out');
+        layout.classList.add('page-in-start');
+        void layout.offsetWidth; // force reflow
 
-        layout.classList.remove('flip-phase1');
-        layout.classList.add('flip-phase2');
+        // Begin the "in" phase
+        requestAnimationFrame(() => {
+            layout.classList.remove('page-in-start');
+            layout.classList.add('page-in');
+        });
 
-        void layout.offsetWidth; // Force reflow
-
+        // Cleanup
         setTimeout(() => {
-            layout.classList.remove('flip-phase2');
-
-            setTimeout(() => {
-                layout.classList.remove('flip-active', 'flip-to-rtl', 'flip-to-ltr');
-            }, 900);
-        }, 60);
-    }, 1000); // Slower flip-out for dramatic effect
+            layout.classList.remove('page-turn-active', dir, 'page-in');
+            layout.style.transformOrigin = '';
+        }, 750);
+    }, 700);
 
     function executeLangSwitch(l) {
         currentLang = l;

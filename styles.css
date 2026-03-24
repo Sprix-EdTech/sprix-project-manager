@@ -2839,172 +2839,166 @@ body.rtl .stat-card-value {
 }
 
 /* ============================================
-   PREMIUM ANIMATIONS: Rich Coin-Flip Transition
+   PREMIUM ANIMATIONS: 3D Page-Turn Transition
    ============================================ */
 
-/* Cross-fade for EN ↔ JP (light, no drama) */
+/* ── EN ↔ JP Cross-fade (light, elegant) ── */
 .lang-fade-out {
     animation: langFadeOut 0.2s ease forwards;
 }
 .lang-fade-in {
-    animation: langFadeIn 0.4s ease forwards;
+    animation: langFadeIn 0.35s ease forwards;
 }
 @keyframes langFadeOut {
-    to { opacity: 0.15; filter: blur(4px); }
+    to { opacity: 0; transform: scale(0.98); }
 }
 @keyframes langFadeIn {
-    from { opacity: 0.15; filter: blur(4px); }
-    to   { opacity: 1;    filter: blur(0); }
+    from { opacity: 0; transform: scale(0.98); }
+    to   { opacity: 1; transform: scale(1); }
 }
 
-/* --- Coin Flip Base --- */
+/* ── Page-Turn: Base ── */
 .app-layout {
-    /* Fine-tuned transition for the flip-in phase */
-    transition: transform 1s cubic-bezier(0.22, 1.0, 0.36, 1), 
-                opacity   0.7s ease,
-                filter    0.6s ease;
     transform-style: preserve-3d;
-    will-change: transform, opacity, filter;
+    backface-visibility: hidden;
 }
 
-.flip-active {
+.page-turn-active {
     pointer-events: none;
-    /* Tight perspective = extreme 3D distortion */
-    perspective: 700px;
-    overflow: hidden;
+    perspective: 1200px;
 }
 
-/* Phase 1: flip OUT — full 90deg + deep shrink + blur */
-.flip-phase1 {
-    transform: rotateY(90deg) scale(0.55);
-    opacity: 0;
-    filter: blur(12px);
-    transition: transform 1s cubic-bezier(0.4, 0, 0.8, 0.5),
-                opacity   0.8s ease,
-                filter    0.6s ease !important;
-}
-
-/* Phase 2: starting point for flip IN (instant, via no-transition) */
-.flip-phase2 {
-    transition: none !important;
-    transform: rotateY(-90deg) scale(0.55);
-    opacity: 0;
-    filter: blur(12px);
-}
-
-/* Direction-aware: entering RTL (→ Arabic) */
-.flip-to-rtl.flip-phase1 {
-    transform: rotateY(-90deg) scale(0.55);
-    opacity: 0;
-    filter: blur(12px);
-    transition: transform 1s cubic-bezier(0.4, 0, 0.8, 0.5),
-                opacity   0.8s ease,
-                filter    0.6s ease !important;
-}
-.flip-to-rtl.flip-phase2 {
-    transition: none !important;
-    transform: rotateY(90deg) scale(0.55);
-    opacity: 0;
-    filter: blur(12px);
-}
-
-/* Direction-aware: leaving RTL (Arabic →) */
-.flip-to-ltr.flip-phase1 {
-    transform: rotateY(90deg) scale(0.55);
-    opacity: 0;
-    filter: blur(12px);
-    transition: transform 1s cubic-bezier(0.4, 0, 0.8, 0.5),
-                opacity   0.8s ease,
-                filter    0.6s ease !important;
-}
-.flip-to-ltr.flip-phase2 {
-    transition: none !important;
-    transform: rotateY(-90deg) scale(0.55);
-    opacity: 0;
-    filter: blur(12px);
-}
-
-/* --- Individual Card Tumble --- */
-.flip-active .portfolio-card,
-.flip-active .stat-card {
-    transition: transform 0.8s cubic-bezier(0.34, 1.56, 0.64, 1), 
+/* ── Page OUT: turns 90deg to the edge ── */
+.page-out {
+    transition: transform 0.7s cubic-bezier(0.5, 0, 0.75, 0),
                 opacity   0.5s ease;
-    transform-style: preserve-3d;
-    will-change: transform, opacity;
-}
-
-/* Cards tumble a full 270deg — one-and-a-quarter flip */
-.flip-active.flip-phase1 .portfolio-card,
-.flip-active.flip-phase1 .stat-card {
-    transform: rotateY(270deg) scale(0.6);
+    transform: rotateY(90deg) scale(0.98);
     opacity: 0;
 }
 
-/* RTL card tumble goes the other way */
-.flip-active.flip-to-rtl.flip-phase1 .portfolio-card,
-.flip-active.flip-to-rtl.flip-phase1 .stat-card {
-    transform: rotateY(-270deg) scale(0.6);
+/* TO Arabic: turn toward the LEFT (negative Y) — hinge is on right edge */
+.page-to-rtl.page-out {
+    transform: rotateY(-90deg) scale(0.98);
+}
+
+/* FROM Arabic: turn toward the RIGHT (positive Y) — hinge is on left edge */
+.page-to-ltr.page-out {
+    transform: rotateY(90deg) scale(0.98);
+}
+
+/* ── Page IN: starting position (instant, no transition) ── */
+.page-in-start {
+    transition: none !important;
     opacity: 0;
 }
 
-/* --- Coin Glint Overlay (dramatic bright streak) --- */
-.flip-active::after {
-    content: '';
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    width: 250vw;
-    height: 250vh;
-    background: linear-gradient(
-        105deg,
-        rgba(255,215,0,0)     0%,
-        rgba(255,215,0,0.15)  38%,
-        rgba(255,255,255,0.9) 50%,
-        rgba(180,220,255,0.15) 62%,
-        rgba(180,220,255,0)   100%
-    );
-    transform: translate(-50%, -50%) rotate(35deg) translateX(-130%);
-    z-index: 10000;
-    pointer-events: none;
-    transition: transform 1.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-    mix-blend-mode: screen;
+/* TO Arabic: new page starts from the opposite side */
+.page-to-rtl.page-in-start {
+    transform: rotateY(60deg) scale(0.98);
 }
 
-.flip-phase1::after {
-    transform: translate(-50%, -50%) rotate(35deg) translateX(130%);
+/* FROM Arabic: new page starts from the opposite side */
+.page-to-ltr.page-in-start {
+    transform: rotateY(-60deg) scale(0.98);
 }
 
-/* Dark vignette during flip for cinema effect */
-.flip-active::before {
+/* ── Page IN: settles to flat ── */
+.page-in {
+    transition: transform 0.7s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity   0.35s ease;
+    transform: rotateY(0deg) scale(1) !important;
+    opacity: 1 !important;
+}
+
+/* ── Book Shadow: deepens as the page lifts ── */
+.page-turn-active::after {
     content: '';
     position: fixed;
     inset: 0;
-    background: radial-gradient(ellipse at center,
-        transparent 30%,
-        rgba(0,0,0,0.5) 100%
+    background: linear-gradient(
+        to right,
+        rgba(0, 0, 0, 0.25) 0%,
+        transparent 40%,
+        transparent 60%,
+        rgba(0, 0, 0, 0.25) 100%
     );
     z-index: 9999;
     pointer-events: none;
     opacity: 0;
-    transition: opacity 0.4s ease;
+    transition: opacity 0.5s ease;
 }
-.flip-phase1::before,
-.flip-phase2::before {
+
+.page-turn-active.page-out::after {
     opacity: 1;
 }
 
-/* --- Stagger Delays (wider spread for wave effect) --- */
-.flip-active .stat-card:nth-child(1) { transition-delay: 0.02s; }
-.flip-active .stat-card:nth-child(2) { transition-delay: 0.07s; }
-.flip-active .stat-card:nth-child(3) { transition-delay: 0.12s; }
-.flip-active .stat-card:nth-child(4) { transition-delay: 0.17s; }
-.flip-active .stat-card:nth-child(5) { transition-delay: 0.22s; }
+/* ── Light Reflection on the "back" of the turning page ── */
+.page-turn-active::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 9998;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.4s ease;
+}
 
-.flip-active .portfolio-card:nth-child(1) { transition-delay: 0.05s; }
-.flip-active .portfolio-card:nth-child(2) { transition-delay: 0.12s; }
-.flip-active .portfolio-card:nth-child(3) { transition-delay: 0.19s; }
-.flip-active .portfolio-card:nth-child(4) { transition-delay: 0.26s; }
-.flip-active .portfolio-card:nth-child(5) { transition-delay: 0.33s; }
-.flip-active .portfolio-card:nth-child(6) { transition-delay: 0.40s; }
-.flip-active .portfolio-card:nth-child(7) { transition-delay: 0.47s; }
-.flip-active .portfolio-card:nth-child(8) { transition-delay: 0.54s; }
+.page-to-rtl.page-out::before {
+    background: linear-gradient(
+        to left,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0.03) 30%,
+        transparent 70%
+    );
+    opacity: 1;
+}
+
+.page-to-ltr.page-out::before {
+    background: linear-gradient(
+        to right,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0.03) 30%,
+        transparent 70%
+    );
+    opacity: 1;
+}
+
+/* ── Card Cascade: cards settle with a gentle staggered drop ── */
+.page-turn-active .portfolio-card,
+.page-turn-active .stat-card {
+    transition: transform 0.5s cubic-bezier(0.22, 1, 0.36, 1),
+                opacity   0.4s ease;
+    transform-style: preserve-3d;
+}
+
+.page-turn-active.page-in .stat-card,
+.page-turn-active.page-in .portfolio-card {
+    animation: cardSettle 0.5s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+@keyframes cardSettle {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* Stagger: cards cascade in sequence */
+.page-turn-active.page-in .stat-card:nth-child(1) { animation-delay: 0.03s; }
+.page-turn-active.page-in .stat-card:nth-child(2) { animation-delay: 0.08s; }
+.page-turn-active.page-in .stat-card:nth-child(3) { animation-delay: 0.13s; }
+.page-turn-active.page-in .stat-card:nth-child(4) { animation-delay: 0.18s; }
+.page-turn-active.page-in .stat-card:nth-child(5) { animation-delay: 0.23s; }
+
+.page-turn-active.page-in .portfolio-card:nth-child(1) { animation-delay: 0.05s; }
+.page-turn-active.page-in .portfolio-card:nth-child(2) { animation-delay: 0.10s; }
+.page-turn-active.page-in .portfolio-card:nth-child(3) { animation-delay: 0.15s; }
+.page-turn-active.page-in .portfolio-card:nth-child(4) { animation-delay: 0.20s; }
+.page-turn-active.page-in .portfolio-card:nth-child(5) { animation-delay: 0.25s; }
+.page-turn-active.page-in .portfolio-card:nth-child(6) { animation-delay: 0.30s; }
+.page-turn-active.page-in .portfolio-card:nth-child(7) { animation-delay: 0.35s; }
+.page-turn-active.page-in .portfolio-card:nth-child(8) { animation-delay: 0.40s; }
