@@ -1150,7 +1150,7 @@
         selectedPfColor = pf ? pf.color : PORTFOLIO_COLOR_OPTIONS[0];
         $('pfCrudTitle').textContent = pf ? t('pf.editTitle') || 'Edit Portfolio' : (t('pf.addTitle') || 'Add Portfolio');
         $('pfCrudBody').innerHTML = `<div class="crud-form">
-        <div class="crud-field"><label class="crud-label">${t('crud.name') || 'Name'}</label><input class="crud-input" id="pfCrudName" value="${pf ? pf.name : ''}"></div>
+        <div class="crud-field"><label class="crud-label">${t('crud.name') || 'Name'}</label><input class="crud-input" id="pfCrudName" value="${pf ? (t('pf.' + pf.id) || pf.name) : ''}"></div>
         <div class="crud-field"><label class="crud-label">${t('pf.icon') || 'Icon'}</label>
             <div class="icon-picker-grid" id="pfIconPicker">${PORTFOLIO_ICON_OPTIONS.map(ic => `<div class="icon-picker-item${ic === selectedPfIcon ? ' selected' : ''}" data-icon="${ic}" onclick="window._selectPfIcon(this.dataset.icon)">${ic}</div>`).join('')}</div>
         </div>

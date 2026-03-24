@@ -2852,13 +2852,37 @@ body.rtl .stat-card-value {
     overflow: hidden;
 }
 
-/* Base rotation for the entire screen */
+/* Base rotation for the entire screen — defaults (LTR→LTR) */
 .flip-phase1 {
     transform: rotateY(90deg) scale(0.9);
     opacity: 0;
 }
 
 .flip-phase2 {
+    transition: none !important;
+    transform: rotateY(-90deg) scale(0.9);
+    opacity: 0;
+}
+
+/* Direction-aware flip: entering RTL (→ Arabic) → flip the opposite way */
+.flip-to-rtl.flip-phase1 {
+    transform: rotateY(-90deg) scale(0.9);
+    opacity: 0;
+}
+
+.flip-to-rtl.flip-phase2 {
+    transition: none !important;
+    transform: rotateY(90deg) scale(0.9);
+    opacity: 0;
+}
+
+/* Leaving RTL (Arabic →): same as default LTR flip */
+.flip-to-ltr.flip-phase1 {
+    transform: rotateY(90deg) scale(0.9);
+    opacity: 0;
+}
+
+.flip-to-ltr.flip-phase2 {
     transition: none !important;
     transform: rotateY(-90deg) scale(0.9);
     opacity: 0;
@@ -2895,10 +2919,17 @@ body.rtl .stat-card-value {
     transform: translate(-50%, -50%) rotate(45deg) translateX(100%);
 }
 
-/* Staggered Card Flips */
+/* Staggered Card Flips — LTR default */
 .flip-active.flip-phase1 .portfolio-card,
 .flip-active.flip-phase1 .stat-card {
     transform: rotateY(180deg) scale(0.8);
+    opacity: 0;
+}
+
+/* Staggered Card Flips — RTL entry: opposite direction */
+.flip-active.flip-to-rtl.flip-phase1 .portfolio-card,
+.flip-active.flip-to-rtl.flip-phase1 .stat-card {
+    transform: rotateY(-180deg) scale(0.8);
     opacity: 0;
 }
 
