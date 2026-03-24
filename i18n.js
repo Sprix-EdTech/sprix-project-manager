@@ -194,39 +194,39 @@ function setLanguage(lang) {
     const directionChanged = isOldRtl !== isNewRtl;
 
     if (!layout || !directionChanged) {
-        // No layout flip needed (e.g. EN <-> JP) or layout not ready
-        executeLangSwitch(lang);
+        // EN ↔ JP: lightweight cross-fade
+        layout.classList.add('lang-fade-out');
+        setTimeout(() => {
+            executeLangSwitch(lang);
+            layout.classList.remove('lang-fade-out');
+            layout.classList.add('lang-fade-in');
+            setTimeout(() => layout.classList.remove('lang-fade-in'), 400);
+        }, 200);
         return;
     }
 
-    // Phase 1: Flip out — direction depends on whether we're entering or leaving RTL
-    // Entering RTL (→ Arabic): flip from left (negative), Arabic text reads right-to-left
-    // Leaving RTL (Arabic →): flip from right (positive), returning to LTR
-    const enteringRtl = isNewRtl; // switching TO Arabic
+    // Arabic direction change: dramatic directional coin flip
+    const enteringRtl = isNewRtl;
     layout.classList.add('flip-active');
     layout.classList.add(enteringRtl ? 'flip-to-rtl' : 'flip-to-ltr');
     layout.classList.add('flip-phase1');
 
     setTimeout(() => {
-        // Phase 2: Switch logic at the 90-degree point
         executeLangSwitch(lang);
-        
+
         layout.classList.remove('flip-phase1');
         layout.classList.add('flip-phase2');
 
-        // Force a reflow
-        void layout.offsetWidth;
+        void layout.offsetWidth; // Force reflow
 
-        // Phase 3: Flip back in
         setTimeout(() => {
             layout.classList.remove('flip-phase2');
-            
-            // Cleanup after animation completes
+
             setTimeout(() => {
                 layout.classList.remove('flip-active', 'flip-to-rtl', 'flip-to-ltr');
-            }, 800);
-        }, 50);
-    }, 800); // Slightly longer for the "rich" effect
+            }, 900);
+        }, 60);
+    }, 1000); // Slower flip-out for dramatic effect
 
     function executeLangSwitch(l) {
         currentLang = l;
