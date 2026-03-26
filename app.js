@@ -729,6 +729,40 @@
         canvas.width = w * dpr; canvas.height = h * dpr;
         canvas.style.width = w + 'px'; canvas.style.height = h + 'px';
         ctx.scale(dpr, dpr);
+
+        if (!canvas._hasClickListener) {
+            canvas._hasClickListener = true;
+            
+            canvas.addEventListener('mousemove', (e) => {
+                const margin = { top: 20, right: 40, bottom: 140, left: 40 }; 
+                const chartW = 500 - margin.left - margin.right;
+                const dx = e.offsetX, dy = e.offsetY;
+                let pointer = (dx >= margin.left && dx <= margin.left + chartW && dy >= margin.top && dy <= 380);
+                canvas.style.cursor = pointer ? 'pointer' : 'default';
+            });
+            
+            canvas.addEventListener('click', (e) => {
+                const margin = { top: 20, right: 40, bottom: 140, left: 40 }; 
+                const chartW = 500 - margin.left - margin.right;
+                const dx = e.offsetX, dy = e.offsetY;
+                
+                if (dx >= margin.left && dx <= margin.left + chartW && dy >= margin.top && dy <= 380) {
+                    const gap = chartW / PORTFOLIOS.length;
+                    const colIndex = Math.floor((dx - margin.left) / gap);
+                    if (colIndex >= 0 && colIndex < PORTFOLIOS.length) {
+                        let targetPfIndex = colIndex;
+                        if (currentLang === 'ar') {
+                            targetPfIndex = PORTFOLIOS.length - 1 - colIndex;
+                        }
+                        const clickedPf = PORTFOLIOS[targetPfIndex];
+                        if (clickedPf) {
+                            navigateTo('portfolio', clickedPf.id);
+                        }
+                    }
+                }
+            });
+        }
+
         
         ctx.direction = currentLang === 'ar' ? 'rtl' : 'ltr';
         
