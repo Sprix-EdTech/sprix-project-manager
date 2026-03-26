@@ -24,8 +24,7 @@
     }
 
     document.addEventListener('DOMContentLoaded', () => {
-        loadLanguage();
-        setLanguage(currentLang);
+        setLanguage(getSavedLanguage());
         const btn = document.getElementById('btnAuth');
         const inp = document.getElementById('authPassword');
         btn.addEventListener('click', doAuth);

@@ -234,10 +234,9 @@ function setLanguage(lang) {
 }
 
 
-
-function loadLanguage() {
+function getSavedLanguage() {
     const saved = localStorage.getItem('sprix-pm-lang');
-    if (saved && ['en', 'ja', 'ar'].includes(saved)) currentLang = saved;
+    return (saved && ['en', 'ja', 'ar'].includes(saved)) ? saved : 'en';
 }
 
 function updateAllText() {
