@@ -640,6 +640,45 @@
         canvas.style.width = '300px'; canvas.style.height = '300px';
         ctx.scale(dpr, dpr);
         ctx.direction = 'ltr';
+
+        if (!canvas._hasClickListener) {
+            canvas._hasClickListener = true;
+            
+            canvas.addEventListener('mousemove', (e) => {
+                const dx = e.offsetX - 150, dy = e.offsetY - 140;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                canvas.style.cursor = (dist >= 60 && dist <= 100) ? 'pointer' : 'default';
+            });
+
+            canvas.addEventListener('click', (e) => {
+                const dx = e.offsetX - 150, dy = e.offsetY - 140;
+                const dist = Math.sqrt(dx * dx + dy * dy);
+                if (dist >= 60 && dist <= 100) {
+                    let angle = Math.atan2(dy, dx);
+                    let relAngle = angle - (-Math.PI / 2); // normalize to start angle
+                    if (relAngle < 0) relAngle += 2 * Math.PI;
+
+                    const allFiltered = getFilteredProjects(); // get fresh data
+                    const counts = STATUS_LIST.map(s => allFiltered.filter(p => p.status === s).length);
+                    const total = counts.reduce((a, b) => a + b, 0) || 1;
+                    let start = 0;
+                    for (let i = 0; i < counts.length; i++) {
+                        if (counts[i] === 0) continue;
+                        const sliceAngle = (counts[i] / total) * 2 * Math.PI;
+                        if (relAngle >= start && relAngle <= start + sliceAngle) {
+                            activeFilters.status = [STATUS_LIST[i]];
+                            applyFilters();
+                            document.querySelectorAll('.filter-pill[data-filter="status"]').forEach(pill => {
+                                pill.classList.toggle('active', true);
+                            });
+                            navigateTo('all-kanban');
+                            break;
+                        }
+                        start += sliceAngle;
+                    }
+                }
+            });
+        }
         const allFiltered = getFilteredProjects();
         const counts = STATUS_LIST.map(s => allFiltered.filter(p => p.status === s).length);
         const total = counts.reduce((a, b) => a + b, 0) || 1;
