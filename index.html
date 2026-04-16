@@ -154,6 +154,11 @@
                     </div>
                     <button class="font-size-btn" id="fontSizeBtn" onclick="window._toggleFontSize()"
                         title="Font Size">Aa</button>
+                    <button class="theme-toggle-btn" id="themeToggleBtn" onclick="window._cycleTheme()" title="Toggle Theme">
+                        <svg id="iconSun" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:block;"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                        <svg id="iconSunset" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M12 10v-7"/><path d="M16 5l-4 4-4-4"/><path d="M19.78 10.22l-1.42 1.42"/><path d="M22 18h-2"/><path d="M4.22 10.22l1.42 1.42"/><path d="M2 18h2"/><path d="M17 18a5 5 0 0 0-10 0"/><line x1="2" x2="22" y1="22" y2="22"/></svg>
+                        <svg id="iconMoon" xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="display:none;"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>
+                    </button>
                 </div>
             </header>
 
@@ -251,15 +256,6 @@
             <!-- Settings View -->
             <section class="view-section" id="viewSettings" style="display:none;">
                 <div class="settings-grid" id="settingsGrid">
-                    <div class="settings-card">
-                        <h3>🎨 <span data-i18n="settings.theme">Theme & Appearance</span></h3>
-                        <div class="settings-field">
-                            <select class="settings-select" id="themeSelect" onchange="window._changeTheme()">
-                                <option value="light" data-i18n="settings.themeLight">Light Mode</option>
-                                <option value="dark" data-i18n="settings.themeDark">Dark Mode</option>
-                            </select>
-                        </div>
-                    </div>
                     <div class="settings-card">
                         <h3>📖 <span data-i18n="settings.tutorialTitle">Tutorial</span></h3>
                         <p data-i18n="settings.tutorialDesc">Learn how to use the application</p>

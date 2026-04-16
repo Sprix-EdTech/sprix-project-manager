@@ -52,7 +52,7 @@
     let searchQuery = '';
     let sortColumn = null;
     let sortDirection = 'asc';
-    let isDark = false;
+    let currentTheme = 'light';
     let projects = [];
     let fontSizeLevel = 0;
     const FONT_SIZES = [14, 16, 18];
@@ -235,20 +235,54 @@
     // ========== THEME ==========
     function setupTheme() {
         const saved = localStorage.getItem('sprix-pm-theme');
-        if (saved === 'dark') { isDark = true; applyTheme(); }
+        if (saved && ['light', 'warm', 'dark'].includes(saved)) {
+            currentTheme = saved;
+        } else {
+            currentTheme = 'light';
+        }
+        applyTheme();
     }
 
-    window._changeTheme = function () {
-        isDark = $('themeSelect').value === 'dark';
+    window._cycleTheme = function () {
+        if (currentTheme === 'light') currentTheme = 'warm';
+        else if (currentTheme === 'warm') currentTheme = 'dark';
+        else currentTheme = 'light';
         applyTheme();
-        localStorage.setItem('sprix-pm-theme', isDark ? 'dark' : 'light');
+        localStorage.setItem('sprix-pm-theme', currentTheme);
     };
 
     function applyTheme() {
-        document.documentElement.setAttribute('data-theme', isDark ? 'dark' : 'light');
-        if ($('themeSelect')) $('themeSelect').value = isDark ? 'dark' : 'light';
+        document.documentElement.setAttribute('data-theme', currentTheme);
+        
+        // Update Header Icons
+        if ($('iconSun')) {
+            $('iconSun').style.display = currentTheme === 'light' ? 'block' : 'none';
+            $('iconSunset').style.display = currentTheme === 'warm' ? 'block' : 'none';
+            $('iconMoon').style.display = currentTheme === 'dark' ? 'block' : 'none';
+        }
+
         if (currentView === 'hub') { drawStatusChart(); drawProgressChart(); }
         if (currentView === 'timeline') renderTimeline();
+    }
+
+    function getThemeColor(type) {
+        if (currentTheme === 'dark') {
+            if (type === 'text') return '#f1f5f9';
+            if (type === 'secondary') return '#94a3b8';
+            if (type === 'border') return '#1e293b';
+            if (type === 'rowBg') return 'rgba(255,255,255,0.02)';
+        } else if (currentTheme === 'warm') {
+            if (type === 'text') return '#4a3a31';
+            if (type === 'secondary') return '#745f53';
+            if (type === 'border') return '#ebdcd0';
+            if (type === 'rowBg') return 'rgba(74,58,49,0.02)';
+        } else {
+            // light
+            if (type === 'text') return '#0f172a';
+            if (type === 'secondary') return '#475569';
+            if (type === 'border') return '#e2e8f0';
+            if (type === 'rowBg') return 'rgba(0,0,0,0.015)';
+        }
     }
 
     // ========== SEARCH ==========
@@ -692,8 +726,8 @@
             let start = -Math.PI / 2;
             const sweep = ease * 2 * Math.PI;
             counts.forEach((c, i) => { if (c === 0) return; const angle = (c / total) * sweep; ctx.beginPath(); ctx.arc(cx, cy, r, start, start + angle); ctx.arc(cx, cy, ir, start + angle, start, true); ctx.closePath(); ctx.fillStyle = colors[i]; ctx.fill(); start += angle; });
-            ctx.fillStyle = isDark ? '#f1f5f9' : '#0f172a'; ctx.font = '700 28px Inter'; ctx.textAlign = 'center'; ctx.fillText(Math.round(total * ease), cx, cy + 2);
-            ctx.font = '500 10px Inter'; ctx.fillStyle = '#94a3b8'; ctx.fillText(t('stat.total') || 'PROJECTS', cx, cy + 16);
+            ctx.fillStyle = getThemeColor('text'); ctx.font = '700 28px Inter'; ctx.textAlign = 'center'; ctx.fillText(Math.round(total * ease), cx, cy + 2);
+            ctx.font = '500 10px Inter'; ctx.fillStyle = getThemeColor('secondary'); ctx.fillText(t('stat.total') || 'PROJECTS', cx, cy + 16);
             if (p >= 1) { 
                 let ly = 270, lx = 20; 
                 ctx.font = '500 10px Inter'; 
@@ -708,7 +742,7 @@
                     ctx.beginPath(); 
                     ctx.arc(lx, ly, 4, 0, 2 * Math.PI); 
                     ctx.fill(); 
-                    ctx.fillStyle = isDark ? '#94a3b8' : '#475569'; 
+                    ctx.fillStyle = getThemeColor('secondary'); 
                     ctx.textAlign = 'left'; 
                     ctx.fillText(text, lx + 8, ly + 3); 
                     lx += textWidth + 20; 
@@ -784,7 +818,7 @@
             const p = Math.min((now - startT) / dur, 1);
             const ease = 1 - Math.pow(1 - p, 3);
             ctx.clearRect(0, 0, w, h);
-            ctx.strokeStyle = isDark ? '#1e293b' : '#e2e8f0'; ctx.lineWidth = 1;
+            ctx.strokeStyle = getThemeColor('border'); ctx.lineWidth = 1;
             
             // Draw Grid & Y-Axis
             for (let i = 0; i <= 4; i++) { 
@@ -794,7 +828,7 @@
                 ctx.lineTo(w - margin.right, y); 
                 ctx.stroke(); 
                 
-                ctx.fillStyle = isDark ? '#64748b' : '#94a3b8'; 
+                ctx.fillStyle = getThemeColor('secondary'); 
                 ctx.font = '500 10px Inter'; 
                 
                 if (currentLang === 'ar') {
@@ -819,7 +853,7 @@
                 ctx.fill(); 
                 
                 if (p > 0.5) { 
-                    ctx.fillStyle = isDark ? '#f1f5f9' : '#0f172a'; 
+                    ctx.fillStyle = getThemeColor('text'); 
                     ctx.font = '700 10px Inter'; 
                     ctx.textAlign = 'center'; 
                     ctx.globalAlpha = (p - 0.5) * 2; 
@@ -827,7 +861,7 @@
                     ctx.globalAlpha = 1; 
                 } 
                 
-                ctx.fillStyle = isDark ? '#94a3b8' : '#475569'; 
+                ctx.fillStyle = getThemeColor('secondary'); 
                 ctx.font = '500 10px Inter'; 
                 ctx.save(); 
                 
@@ -1030,10 +1064,10 @@
         const toX = d => labelW + ((d - minD) / totalMs) * chartW;
         const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
         let md = new Date(minD); ctx.font = '600 10px Inter'; ctx.textAlign = 'center';
-        while (md <= maxD) { const x = toX(md); const nextM = new Date(md); nextM.setMonth(nextM.getMonth() + 1); const x2 = toX(nextM > maxD ? maxD : nextM); ctx.fillStyle = isDark ? '#94a3b8' : '#475569'; ctx.fillText(months[md.getMonth()] + ' ' + md.getFullYear().toString().slice(2), (x + x2) / 2, 18); ctx.strokeStyle = isDark ? '#1e293b' : '#e2e8f0'; ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, 28); ctx.lineTo(x, h); ctx.stroke(); md.setMonth(md.getMonth() + 1); }
+        while (md <= maxD) { const x = toX(md); const nextM = new Date(md); nextM.setMonth(nextM.getMonth() + 1); const x2 = toX(nextM > maxD ? maxD : nextM); ctx.fillStyle = getThemeColor('secondary'); ctx.fillText(months[md.getMonth()] + ' ' + md.getFullYear().toString().slice(2), (x + x2) / 2, 18); ctx.strokeStyle = getThemeColor('border'); ctx.lineWidth = 1; ctx.beginPath(); ctx.moveTo(x, 28); ctx.lineTo(x, h); ctx.stroke(); md.setMonth(md.getMonth() + 1); }
         const today = new Date();
         if (today >= minD && today <= maxD) { const tx = toX(today); ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2; ctx.setLineDash([4, 4]); ctx.beginPath(); ctx.moveTo(tx, 28); ctx.lineTo(tx, h); ctx.stroke(); ctx.setLineDash([]); ctx.fillStyle = '#ef4444'; ctx.font = '600 9px Inter'; ctx.fillText('Today', tx, 40); }
-        ps.forEach((p, i) => { const y = marginTop + i * rowH; const x1 = toX(new Date(p.startdate)); const x2 = toX(new Date(p.targetdate)); if (i % 2 === 0) { ctx.fillStyle = isDark ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.015)'; ctx.fillRect(0, y, w, rowH); } ctx.fillStyle = isDark ? '#f1f5f9' : '#0f172a'; ctx.font = '500 11px Inter'; ctx.textAlign = 'right'; ctx.fillText(p.name.length > 20 ? p.name.slice(0, 20) + '…' : p.name, labelW - 10, y + rowH / 2 + 3); const barH = 12, barY = y + (rowH - barH) / 2; const color = STATUS_COLORS[p.status]; ctx.fillStyle = color + '40'; ctx.beginPath(); ctx.roundRect(x1, barY, Math.max(x2 - x1, 6), barH, 3); ctx.fill(); const progW = (x2 - x1) * (p.progress / 100); ctx.fillStyle = color; ctx.beginPath(); ctx.roundRect(x1, barY, Math.max(progW, 3), barH, 3); ctx.fill(); });
+        ps.forEach((p, i) => { const y = marginTop + i * rowH; const x1 = toX(new Date(p.startdate)); const x2 = toX(new Date(p.targetdate)); if (i % 2 === 0) { ctx.fillStyle = getThemeColor('rowBg'); ctx.fillRect(0, y, w, rowH); } ctx.fillStyle = getThemeColor('text'); ctx.font = '500 11px Inter'; ctx.textAlign = 'right'; ctx.fillText(p.name.length > 20 ? p.name.slice(0, 20) + '…' : p.name, labelW - 10, y + rowH / 2 + 3); const barH = 12, barY = y + (rowH - barH) / 2; const color = STATUS_COLORS[p.status]; ctx.fillStyle = color + '40'; ctx.beginPath(); ctx.roundRect(x1, barY, Math.max(x2 - x1, 6), barH, 3); ctx.fill(); const progW = (x2 - x1) * (p.progress / 100); ctx.fillStyle = color; ctx.beginPath(); ctx.roundRect(x1, barY, Math.max(progW, 3), barH, 3); ctx.fill(); });
     }
 
     // ========== MODAL (Detail) ==========
